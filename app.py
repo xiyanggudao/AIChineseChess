@@ -1,27 +1,30 @@
 import tkinter
+from gui.ChessboardPainter import ChessboardPainter
 
 def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
 	window.geometry(geometry)
 
-def drawChess(canvas, x, y, chessSize, text, textSize, textColor):
-	canvas.create_oval(x-chessSize, y-chessSize, x+chessSize, y+chessSize)
-	canvas.create_text((x, y), text=text, fill=textColor, font='-family 楷体 -size '+str(textSize))
+def drawChess(x, y, chessSize, text, textColor):
+	painter.setChessColor(textColor)
+	painter.setChessBaseColor('#666611')
+	painter.setChessSize(chessSize)
+	painter.drawChess(x, y, text)
 
-def drawOutline(canvas, width, height, border=3):
+def drawOutline(width, height):
 	margin=20
-	canvas.create_rectangle(border+margin, border+margin, width-border-margin, height-border-margin, width=border)
+	painter.drawRectangle(margin, margin, width-margin*2, height-margin*2, 3)
 
-def drawBackground(canvas, width, height):
-	canvas.create_rectangle(0, 0, width, height, fill='grey')
+def drawBackground(width, height):
+	painter.clearBoard(width, height)
 
 def setWindowTitle(window, title):
 	window.title(title)
 
-def repaintCanvas(canvas, width, height):
-	drawBackground(canvas, width, height)
-	drawOutline(canvas, width, height)
-	drawChess(canvas, 120, 120, 29, '相', 38, '#ff6666')
+def repaintCanvas(width, height):
+	drawBackground(width, height)
+	drawOutline(width, height)
+	drawChess(120, 120, 50, '相', '#ff3333')
 
 def onResize(event):
 	'''
@@ -31,18 +34,19 @@ def onResize(event):
 	print(event.type)
 	print(type(event.widget))
 	'''
-	repaintCanvas(event.widget, event.width, event.height)
+	repaintCanvas(event.width, event.height)
 
 def onLButtonClick(event):
 	print(event.x, event.y)
+	drawChess(event.x, event.y, 50, '相', '#ff3333')
 
 rootWindow = tkinter.Tk()
 
-cv = tkinter.Canvas(rootWindow, bg='grey')
-cv.update();
-drawOutline(cv, 300, 400)
+cv = tkinter.Canvas(rootWindow)
+painter = ChessboardPainter(cv)
+painter.setBoardColor('grey')
 
-setWindowSize(rootWindow, 300, 400)
+setWindowSize(rootWindow, 440, 484)
 rootWindow.minsize(100, 200)
 setWindowTitle(rootWindow, '中国象棋')
 
@@ -50,4 +54,4 @@ cv.bind('<Configure>', onResize)
 cv.bind('<Button-1>', onLButtonClick)
 
 cv.pack(fill=tkinter.BOTH, expand=1)
-rootWindow.mainloop();
+rootWindow.mainloop()
