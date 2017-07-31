@@ -6,7 +6,8 @@ class PositionCalculator:
 		self.__height = 0
 		self.__margin = 0
 		self.__padding = 0
-		self.__spacing = 0
+		self.__chessmanSpacing = 0
+		self.__opposingSpacing = 0
 
 	def getOutlinePos(self):
 		retX, retY = self.__margin, self.__margin
@@ -19,7 +20,20 @@ class PositionCalculator:
 
 	def getCoordinatePos(self, x, y):
 		retX, retY = self.getBorderPos()
+		retX += self.__chessmanSpacing * x
+		retY += self.__chessmanSpacing * y
+		if y > 4:
+			retY += self.__opposingSpacing
 		return (retX, retY)
+
+	def getChessmanSize(self):
+		return (0, 0)
+
+	def getOutlineSize(self):
+		retWidth, retHeight = self.__width, self.__height
+		retWidth -= self.__margin
+		retHeight -= self.__margin
+		return (retWidth, retHeight)
 
 	def setMargin(self, margin):
 		self.__margin = margin
@@ -27,11 +41,15 @@ class PositionCalculator:
 	def setPadding(self, padding):
 		self.__padding = padding
 
-	def setBoardSize(self, width, height):
+	def setChessboardSize(self, width, height):
 		self.__width = width
 		self.__height = height
 
-	def setChessSpacing(self, spacing):
-		self.__spacing = spacing
+	def setChessmanSpacing(self, spacing):
+		self.__chessmanSpacing = spacing
+
+	# 楚河汉界的宽度
+	def setOpposingSpacing(self, opposingSpacing):
+		self.__opposingSpacing = opposingSpacing
 
 
