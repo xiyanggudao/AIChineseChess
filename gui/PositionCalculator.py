@@ -20,8 +20,9 @@ class PositionCalculator:
 
 	def getCoordinatePos(self, x, y):
 		retX, retY = self.getBorderPos()
-		retX += self.__chessmanSpacing * x
-		retY += self.__chessmanSpacing * y
+		cellSize = self.getChessmanSize() + self.__chessmanSpacing
+		retX += cellSize * x
+		retY += cellSize * y
 		if y > 4:
 			retY += self.__opposingSpacing
 		return (retX, retY)
@@ -41,17 +42,28 @@ class PositionCalculator:
 		return min(maxWidth, maxHeight)
 
 	def getOutlineSize(self):
-		retWidth, retHeight = self.__width, self.__height
-		retWidth -= 2*self.__margin
-		retHeight -= 2*self.__margin
-		retWidth = retWidth//8*8
-		retHeight = retHeight//9*9
-		return (retWidth, retHeight)
+		return self.__getOutlineSize(self.getChessmanSize())
 
 	def getBorderSize(self):
-		retWidth, retHeight = self.getOutlineSize()
-		retWidth -= 2*self.__padding
-		retHeight -= 2*self.__padding
+		return self.__getBorderSize(self.getChessmanSize())
+
+	def __getBorderSize(self, chessmanSize):
+		retWidth, retHeight = (8*chessmanSize, 9*chessmanSize)
+		retWidth += 8*self.__chessmanSpacing
+		retHeight += 9*self.__chessmanSpacing
+		retHeight += self.__opposingSpacing
+		return (retWidth, retHeight)
+
+	def __getOutlineSize(self, chessmanSize):
+		retWidth, retHeight = self.__getBorderSize(chessmanSize)
+		retWidth += 2*self.__padding
+		retHeight += 2*self.__padding
+		return (retWidth, retHeight)
+
+	def getBoardSizeForFixedChessmanSize(self, chessmanSize):
+		retWidth, retHeight = self.__getOutlineSize(chessmanSize)
+		retWidth += 2*self.__margin
+		retHeight += 2*self.__margin
 		return (retWidth, retHeight)
 
 	def setMargin(self, margin):

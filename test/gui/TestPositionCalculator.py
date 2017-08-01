@@ -119,14 +119,43 @@ class TestPositionCalculator(unittest.TestCase):
 		posCalculator.setChessboardSize(160, 95)
 		self.assertEqual(posCalculator.getOutlineSize(), (80, 90))
 		posCalculator.setOpposingSpacing(10)
-		self.assertEqual(posCalculator.getOutlineSize(), (72, 81))
+		self.assertEqual(posCalculator.getOutlineSize(), (72, 91))
+		posCalculator.setPadding(1)
+		self.assertEqual(posCalculator.getOutlineSize(), (74, 93))
 		pass
 
 	def testCalculateBorderSize(self):
-		pass
+		posCalculator = PositionCalculator()
+		posCalculator.setChessboardSize(160, 95)
+		posCalculator.setOpposingSpacing(10)
+		posCalculator.setPadding(1)
+		self.assertEqual(posCalculator.getBorderSize(), (72, 91))
+
+	def testCalculateCoordinatePos(self):
+		posCalculator = PositionCalculator()
+		posCalculator.setChessboardSize(80, 100)
+		posCalculator.setOpposingSpacing(10)
+		self.assertEqual(posCalculator.getCoordinatePos(2, 0), (20, 0))
+		self.assertEqual(posCalculator.getCoordinatePos(0, 4), (0, 40))
+		self.assertEqual(posCalculator.getCoordinatePos(0, 5), (0, 60))
+		self.assertEqual(posCalculator.getCoordinatePos(8, 9), (80, 100))
+		posCalculator.setChessmanSpacing(1)
+		self.assertEqual(posCalculator.getCoordinatePos(2, 0), (20, 0))
+		self.assertEqual(posCalculator.getCoordinatePos(0, 4), (0, 40))
+		self.assertEqual(posCalculator.getCoordinatePos(0, 5), (0, 60))
+		self.assertEqual(posCalculator.getCoordinatePos(8, 9), (80, 100))
 
 	def testCalculateBoardSize(self):
-		pass
+		posCalculator = PositionCalculator()
+		self.assertEqual(posCalculator.getBoardSizeForFixedChessmanSize(10), (80, 90))
+		posCalculator.setChessmanSpacing(1)
+		self.assertEqual(posCalculator.getBoardSizeForFixedChessmanSize(10), (88, 99))
+		posCalculator.setOpposingSpacing(2)
+		self.assertEqual(posCalculator.getBoardSizeForFixedChessmanSize(10), (88, 101))
+		posCalculator.setPadding(3)
+		self.assertEqual(posCalculator.getBoardSizeForFixedChessmanSize(10), (94, 107))
+		posCalculator.setMargin(4)
+		self.assertEqual(posCalculator.getBoardSizeForFixedChessmanSize(10), (102, 115))
 
 
 if __name__ == '__main__':
