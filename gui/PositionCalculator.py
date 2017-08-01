@@ -27,12 +27,31 @@ class PositionCalculator:
 		return (retX, retY)
 
 	def getChessmanSize(self):
-		return (0, 0)
+		maxWidth = self.__width
+		maxWidth -= 2*self.__margin
+		maxWidth -= 2*self.__padding
+		maxWidth -= 8*self.__chessmanSpacing
+		maxWidth //= 8
+		maxHeight  = self.__height
+		maxHeight -= 2*self.__margin
+		maxHeight -= 2*self.__padding
+		maxHeight -= 9*self.__chessmanSpacing
+		maxHeight -= self.__opposingSpacing
+		maxHeight //= 9
+		return min(maxWidth, maxHeight)
 
 	def getOutlineSize(self):
 		retWidth, retHeight = self.__width, self.__height
-		retWidth -= self.__margin
-		retHeight -= self.__margin
+		retWidth -= 2*self.__margin
+		retHeight -= 2*self.__margin
+		retWidth = retWidth//8*8
+		retHeight = retHeight//9*9
+		return (retWidth, retHeight)
+
+	def getBorderSize(self):
+		retWidth, retHeight = self.getOutlineSize()
+		retWidth -= 2*self.__padding
+		retHeight -= 2*self.__padding
 		return (retWidth, retHeight)
 
 	def setMargin(self, margin):
