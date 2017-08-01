@@ -10,15 +10,18 @@ class PositionCalculator:
 		self.__opposingSpacing = 0
 
 	def outlinePos(self):
-		retX, retY = self.__margin, self.__margin
-		return (retX, retY)
+		outlineSize = self.outlineSize()
+		extraWidth = self.__width - outlineSize[0]
+		extraHeight = self.__height - outlineSize[1]
+		return (extraWidth // 2 , extraHeight // 2)
 
 	def borderPos(self):
-		indent = self.__margin + self.__padding
-		retX, retY = indent, indent
+		retX, retY = self.outlinePos()
+		retX += self.__padding
+		retY += self.__padding
 		return (retX, retY)
 
-	def coordinatePos(self, x, y):
+	def positionAtCoordinate(self, x, y):
 		retX, retY = self.borderPos()
 		cellSize = self.chessmanSize() + self.__chessmanSpacing
 		retX += cellSize * x

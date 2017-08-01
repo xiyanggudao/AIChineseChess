@@ -14,10 +14,10 @@ class TestPositionCalculator(unittest.TestCase):
 
 		self.assertEqual(posCalculator.chessmanSize(), 0)
 
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (0, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (0, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (0, 0))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (0, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (0, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (0, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (0, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (0, 0))
 
 	def testMargin(self):
 		posCalculator = PositionCalculator()
@@ -33,10 +33,10 @@ class TestPositionCalculator(unittest.TestCase):
 
 		self.assertEqual(posCalculator.chessmanSize(), 0)
 
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (20, 20))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (20, 20))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (20, 20))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (20, 20))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (20, 20))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (20, 20))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (20, 20))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (20, 20))
 
 	def testPadding(self):
 		posCalculator = PositionCalculator()
@@ -51,10 +51,10 @@ class TestPositionCalculator(unittest.TestCase):
 
 		self.assertEqual(posCalculator.chessmanSize(), 0)
 
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (5, 5))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (5, 5))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (5, 5))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (5, 5))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (5, 5))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (5, 5))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (5, 5))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (5, 5))
 
 	def testChessmanSpacing(self):
 		posCalculator = PositionCalculator()
@@ -70,10 +70,10 @@ class TestPositionCalculator(unittest.TestCase):
 
 		self.assertEqual(posCalculator.chessmanSize(), 0)
 
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (20, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (0, 40))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (0, 50))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (80, 90))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (20, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (0, 40))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (0, 50))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (80, 90))
 
 	# 楚河汉界的宽度
 	def testOpposingSpacing(self):
@@ -90,10 +90,10 @@ class TestPositionCalculator(unittest.TestCase):
 
 		self.assertEqual(posCalculator.chessmanSize(), 0)
 
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (0, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (0, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (0, 2))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (0, 2))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (0, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (0, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (0, 2))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (0, 2))
 
 	def testCalculateChessmanSize(self):
 		posCalculator = PositionCalculator()
@@ -135,15 +135,15 @@ class TestPositionCalculator(unittest.TestCase):
 		posCalculator = PositionCalculator()
 		posCalculator.setChessboardSize(80, 100)
 		posCalculator.setOpposingSpacing(10)
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (20, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (0, 40))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (0, 60))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (80, 100))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (20, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (0, 40))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (0, 60))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (80, 100))
 		posCalculator.setChessmanSpacing(1)
-		self.assertEqual(posCalculator.coordinatePos(2, 0), (20, 0))
-		self.assertEqual(posCalculator.coordinatePos(0, 4), (0, 40))
-		self.assertEqual(posCalculator.coordinatePos(0, 5), (0, 60))
-		self.assertEqual(posCalculator.coordinatePos(8, 9), (80, 100))
+		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (20, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (0, 40))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (0, 60))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (80, 100))
 
 	def testCalculateBoardSize(self):
 		posCalculator = PositionCalculator()
@@ -156,6 +156,19 @@ class TestPositionCalculator(unittest.TestCase):
 		self.assertEqual(posCalculator.boardSizeForFixedChessmanSize(10), (94, 107))
 		posCalculator.setMargin(4)
 		self.assertEqual(posCalculator.boardSizeForFixedChessmanSize(10), (102, 115))
+
+	def testCenterInBoard(self):
+		posCalculator = PositionCalculator()
+		posCalculator.setChessboardSize(80, 110)
+		self.assertEqual(posCalculator.borderPos(), (0, 10))
+		self.assertEqual(posCalculator.outlinePos(), (0, 10))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 0), (0, 10))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (80, 100))
+		posCalculator.setChessboardSize(100, 90)
+		self.assertEqual(posCalculator.borderPos(), (10, 0))
+		self.assertEqual(posCalculator.outlinePos(), (10, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(0, 0), (10, 0))
+		self.assertEqual(posCalculator.positionAtCoordinate(8, 9), (90, 90))
 
 
 if __name__ == '__main__':
