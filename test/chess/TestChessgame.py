@@ -6,8 +6,8 @@ from chess.Chessman import Chessman
 
 class TestChessmanOnBoard(unittest.TestCase):
 	def testProperty(self):
-		chess = ChessmanOnBoard((0, 1), Chessman.getIdentifier(Chessman.rook, Chessman.black))
-		self.assertEqual(chess.identifier, Chessman.getIdentifier(Chessman.rook, Chessman.black))
+		chess = ChessmanOnBoard((0, 1), Chessman.identifier(Chessman.rook, Chessman.black))
+		self.assertEqual(chess.identifier, Chessman.identifier(Chessman.rook, Chessman.black))
 		self.assertEqual(chess.position, (0, 1))
 		self.assertEqual(chess.type, Chessman.rook)
 		self.assertEqual(chess.color, Chessman.black)
@@ -19,20 +19,20 @@ class TestChessgame(unittest.TestCase):
 		game = Chessgame()
 		self.assertEqual(game.moveSize(), 0)
 
-		rKing = Chessman.getIdentifier(Chessman.king, Chessman.red)
-		rMandarin = Chessman.getIdentifier(Chessman.mandarin, Chessman.red)
-		rElephant = Chessman.getIdentifier(Chessman.elephant, Chessman.red)
-		rKnight = Chessman.getIdentifier(Chessman.knight, Chessman.red)
-		rRook = Chessman.getIdentifier(Chessman.rook, Chessman.red)
-		rCannon = Chessman.getIdentifier(Chessman.cannon, Chessman.red)
-		rPawn = Chessman.getIdentifier(Chessman.pawn, Chessman.red)
-		bKing = Chessman.getIdentifier(Chessman.king, Chessman.black)
-		bMandarin = Chessman.getIdentifier(Chessman.mandarin, Chessman.black)
-		bElephant = Chessman.getIdentifier(Chessman.elephant, Chessman.black)
-		bKnight = Chessman.getIdentifier(Chessman.knight, Chessman.black)
-		bRook = Chessman.getIdentifier(Chessman.rook, Chessman.black)
-		bCannon = Chessman.getIdentifier(Chessman.cannon, Chessman.black)
-		bPawn = Chessman.getIdentifier(Chessman.pawn, Chessman.black)
+		rKing = Chessman.identifier(Chessman.king, Chessman.red)
+		rMandarin = Chessman.identifier(Chessman.mandarin, Chessman.red)
+		rElephant = Chessman.identifier(Chessman.elephant, Chessman.red)
+		rKnight = Chessman.identifier(Chessman.knight, Chessman.red)
+		rRook = Chessman.identifier(Chessman.rook, Chessman.red)
+		rCannon = Chessman.identifier(Chessman.cannon, Chessman.red)
+		rPawn = Chessman.identifier(Chessman.pawn, Chessman.red)
+		bKing = Chessman.identifier(Chessman.king, Chessman.black)
+		bMandarin = Chessman.identifier(Chessman.mandarin, Chessman.black)
+		bElephant = Chessman.identifier(Chessman.elephant, Chessman.black)
+		bKnight = Chessman.identifier(Chessman.knight, Chessman.black)
+		bRook = Chessman.identifier(Chessman.rook, Chessman.black)
+		bCannon = Chessman.identifier(Chessman.cannon, Chessman.black)
+		bPawn = Chessman.identifier(Chessman.pawn, Chessman.black)
 		board = [
 			[rRook,rKnight,rElephant,rMandarin,rKing,rMandarin,rElephant,rKnight,rRook],
 			[None,None,None,None,None,None,None,None,None],

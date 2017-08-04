@@ -21,75 +21,75 @@ class TestChessman(unittest.TestCase):
 	def testIdentifierUnique(self):
 		idSet = set()
 
-		value = Chessman.getIdentifier(Chessman.king, Chessman.red)
+		value = Chessman.identifier(Chessman.king, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.mandarin, Chessman.red)
+		value = Chessman.identifier(Chessman.mandarin, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.elephant, Chessman.red)
+		value = Chessman.identifier(Chessman.elephant, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.knight, Chessman.red)
+		value = Chessman.identifier(Chessman.knight, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.rook, Chessman.red)
+		value = Chessman.identifier(Chessman.rook, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.cannon, Chessman.red)
+		value = Chessman.identifier(Chessman.cannon, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.pawn, Chessman.red)
+		value = Chessman.identifier(Chessman.pawn, Chessman.red)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.king, Chessman.black)
+		value = Chessman.identifier(Chessman.king, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.mandarin, Chessman.black)
+		value = Chessman.identifier(Chessman.mandarin, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.elephant, Chessman.black)
+		value = Chessman.identifier(Chessman.elephant, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.knight, Chessman.black)
+		value = Chessman.identifier(Chessman.knight, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.rook, Chessman.black)
+		value = Chessman.identifier(Chessman.rook, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.cannon, Chessman.black)
+		value = Chessman.identifier(Chessman.cannon, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		value = Chessman.getIdentifier(Chessman.pawn, Chessman.black)
+		value = Chessman.identifier(Chessman.pawn, Chessman.black)
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
 		self.assertEqual(len(idSet), 14)
 
 	def testIdentifierTransform(self):
-		redKing = Chessman.getIdentifier(Chessman.king, Chessman.red)
-		blackKing = Chessman.getIdentifier(Chessman.king, Chessman.black)
+		redKing = Chessman.identifier(Chessman.king, Chessman.red)
+		blackKing = Chessman.identifier(Chessman.king, Chessman.black)
 
 		self.assertNotEqual(redKing, blackKing)
 
-		self.assertEqual(Chessman.getType(redKing), Chessman.king)
-		self.assertEqual(Chessman.getType(blackKing), Chessman.king)
+		self.assertEqual(Chessman.type(redKing), Chessman.king)
+		self.assertEqual(Chessman.type(blackKing), Chessman.king)
 
-		self.assertEqual(Chessman.getColor(redKing), Chessman.red)
-		self.assertEqual(Chessman.getColor(blackKing), Chessman.black)
+		self.assertEqual(Chessman.color(redKing), Chessman.red)
+		self.assertEqual(Chessman.color(blackKing), Chessman.black)
 
 
 if __name__ == '__main__':

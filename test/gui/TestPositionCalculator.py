@@ -79,7 +79,7 @@ class TestPositionCalculator(unittest.TestCase):
 	def testOpposingSpacing(self):
 		posCalculator = PositionCalculator()
 
-		posCalculator.setOpposingSpacing(2)
+		posCalculator.setBoundarySpacing(2)
 		posCalculator.setChessboardSize(0, 2)
 
 		self.assertEqual(posCalculator.outlinePos(), (0, 0))
@@ -105,7 +105,7 @@ class TestPositionCalculator(unittest.TestCase):
 		self.assertEqual(posCalculator.chessmanSize(), 10)
 		posCalculator.setChessboardSize(160, 95)
 		self.assertEqual(posCalculator.chessmanSize(), 10)
-		posCalculator.setOpposingSpacing(10)
+		posCalculator.setBoundarySpacing(10)
 		self.assertEqual(posCalculator.chessmanSize(), 9)
 
 	def testCalculateOutlineSize(self):
@@ -118,7 +118,7 @@ class TestPositionCalculator(unittest.TestCase):
 		self.assertEqual(posCalculator.outlineSize(), (80, 90))
 		posCalculator.setChessboardSize(160, 95)
 		self.assertEqual(posCalculator.outlineSize(), (80, 90))
-		posCalculator.setOpposingSpacing(10)
+		posCalculator.setBoundarySpacing(10)
 		self.assertEqual(posCalculator.outlineSize(), (72, 91))
 		posCalculator.setPadding(1)
 		self.assertEqual(posCalculator.outlineSize(), (74, 93))
@@ -127,14 +127,14 @@ class TestPositionCalculator(unittest.TestCase):
 	def testCalculateBorderSize(self):
 		posCalculator = PositionCalculator()
 		posCalculator.setChessboardSize(160, 95)
-		posCalculator.setOpposingSpacing(10)
+		posCalculator.setBoundarySpacing(10)
 		posCalculator.setPadding(1)
 		self.assertEqual(posCalculator.borderSize(), (72, 91))
 
 	def testCalculateCoordinatePos(self):
 		posCalculator = PositionCalculator()
 		posCalculator.setChessboardSize(80, 100)
-		posCalculator.setOpposingSpacing(10)
+		posCalculator.setBoundarySpacing(10)
 		self.assertEqual(posCalculator.positionAtCoordinate(2, 0), (20, 0))
 		self.assertEqual(posCalculator.positionAtCoordinate(0, 4), (0, 40))
 		self.assertEqual(posCalculator.positionAtCoordinate(0, 5), (0, 60))
@@ -150,7 +150,7 @@ class TestPositionCalculator(unittest.TestCase):
 		self.assertEqual(posCalculator.boardSizeForFixedChessmanSize(10), (80, 90))
 		posCalculator.setChessmanSpacing(1)
 		self.assertEqual(posCalculator.boardSizeForFixedChessmanSize(10), (88, 99))
-		posCalculator.setOpposingSpacing(2)
+		posCalculator.setBoundarySpacing(2)
 		self.assertEqual(posCalculator.boardSizeForFixedChessmanSize(10), (88, 101))
 		posCalculator.setPadding(3)
 		self.assertEqual(posCalculator.boardSizeForFixedChessmanSize(10), (94, 107))

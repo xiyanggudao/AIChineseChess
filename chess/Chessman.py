@@ -14,13 +14,21 @@ class Chessman:
 	black = 8
 
 	@staticmethod
-	def getIdentifier(type, color):
+	def identifier(type, color):
 		return type | color
 
 	@staticmethod
-	def getType(identifier):
+	def type(identifier):
 		return identifier & 0x7
 
 	@staticmethod
-	def getColor(identifier):
+	def color(identifier):
 		return identifier & 0x8
+
+	@staticmethod
+	def text(identifier):
+		allText = [
+			'空','帥','仕','相','馬','車','砲','兵',
+			'空','將','士','象','馬','車','炮','卒'
+		]
+		return allText[identifier]

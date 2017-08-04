@@ -7,7 +7,7 @@ class PositionCalculator:
 		self.__margin = 0
 		self.__padding = 0
 		self.__chessmanSpacing = 0
-		self.__opposingSpacing = 0
+		self.__boundarySpacing = 0
 
 	def outlinePos(self):
 		outlineSize = self.outlineSize()
@@ -27,7 +27,7 @@ class PositionCalculator:
 		retX += cellSize * x
 		retY += cellSize * y
 		if y > 4:
-			retY += self.__opposingSpacing
+			retY += self.__boundarySpacing
 		return (retX, retY)
 
 	def chessmanSize(self):
@@ -40,7 +40,7 @@ class PositionCalculator:
 		maxHeight -= 2*self.__margin
 		maxHeight -= 2*self.__padding
 		maxHeight -= 9*self.__chessmanSpacing
-		maxHeight -= self.__opposingSpacing
+		maxHeight -= self.__boundarySpacing
 		maxHeight //= 9
 		return min(maxWidth, maxHeight)
 
@@ -50,11 +50,14 @@ class PositionCalculator:
 	def borderSize(self):
 		return self.__borderSize(self.chessmanSize())
 
+	def boardSize(self):
+		return (self.__width, self.__height)
+
 	def __borderSize(self, chessmanSize):
 		retWidth, retHeight = (8*chessmanSize, 9*chessmanSize)
 		retWidth += 8*self.__chessmanSpacing
 		retHeight += 9*self.__chessmanSpacing
-		retHeight += self.__opposingSpacing
+		retHeight += self.__boundarySpacing
 		return (retWidth, retHeight)
 
 	def __outlineSize(self, chessmanSize):
@@ -83,7 +86,7 @@ class PositionCalculator:
 		self.__chessmanSpacing = spacing
 
 	# 楚河汉界的宽度
-	def setOpposingSpacing(self, opposingSpacing):
-		self.__opposingSpacing = opposingSpacing
+	def setBoundarySpacing(self, boundarySpacing):
+		self.__boundarySpacing = boundarySpacing
 
 

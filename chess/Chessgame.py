@@ -24,11 +24,11 @@ class ChessmanOnBoard:
 
 	@property
 	def type(self):
-		return Chessman.getType(self.__identifier)
+		return Chessman.type(self.__identifier)
 
 	@property
 	def color(self):
-		return Chessman.getColor(self.__identifier)
+		return Chessman.color(self.__identifier)
 
 # 走棋数据，提供外面访问走棋历史的接口
 class Move:
@@ -58,20 +58,20 @@ class Move:
 class Chessgame:
 
 	def __init__(self):
-		rKing = Chessman.getIdentifier(Chessman.king, Chessman.red)
-		rMandarin = Chessman.getIdentifier(Chessman.mandarin, Chessman.red)
-		rElephant = Chessman.getIdentifier(Chessman.elephant, Chessman.red)
-		rKnight = Chessman.getIdentifier(Chessman.knight, Chessman.red)
-		rRook = Chessman.getIdentifier(Chessman.rook, Chessman.red)
-		rCannon = Chessman.getIdentifier(Chessman.cannon, Chessman.red)
-		rPawn = Chessman.getIdentifier(Chessman.pawn, Chessman.red)
-		bKing = Chessman.getIdentifier(Chessman.king, Chessman.black)
-		bMandarin = Chessman.getIdentifier(Chessman.mandarin, Chessman.black)
-		bElephant = Chessman.getIdentifier(Chessman.elephant, Chessman.black)
-		bKnight = Chessman.getIdentifier(Chessman.knight, Chessman.black)
-		bRook = Chessman.getIdentifier(Chessman.rook, Chessman.black)
-		bCannon = Chessman.getIdentifier(Chessman.cannon, Chessman.black)
-		bPawn = Chessman.getIdentifier(Chessman.pawn, Chessman.black)
+		rKing = Chessman.identifier(Chessman.king, Chessman.red)
+		rMandarin = Chessman.identifier(Chessman.mandarin, Chessman.red)
+		rElephant = Chessman.identifier(Chessman.elephant, Chessman.red)
+		rKnight = Chessman.identifier(Chessman.knight, Chessman.red)
+		rRook = Chessman.identifier(Chessman.rook, Chessman.red)
+		rCannon = Chessman.identifier(Chessman.cannon, Chessman.red)
+		rPawn = Chessman.identifier(Chessman.pawn, Chessman.red)
+		bKing = Chessman.identifier(Chessman.king, Chessman.black)
+		bMandarin = Chessman.identifier(Chessman.mandarin, Chessman.black)
+		bElephant = Chessman.identifier(Chessman.elephant, Chessman.black)
+		bKnight = Chessman.identifier(Chessman.knight, Chessman.black)
+		bRook = Chessman.identifier(Chessman.rook, Chessman.black)
+		bCannon = Chessman.identifier(Chessman.cannon, Chessman.black)
+		bPawn = Chessman.identifier(Chessman.pawn, Chessman.black)
 
 		self.__chessmen = [
 			rKing,rMandarin,rMandarin,rElephant,rElephant,rKnight,rKnight,rRook,rRook,
