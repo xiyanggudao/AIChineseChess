@@ -2,7 +2,7 @@
 
 #### 进行以下尝试
 
-- [测试驱动开发](http://blog.csdn.net/xiyanggudao/article/details/76315271)
+- 测试驱动开发
 - Python编程
 - 深度学习算法
 
@@ -17,7 +17,7 @@
 - *每次只关注解决一个问题*
 - **测试--->实现--->重构--->测试……**
 
-#### 测试驱动开发的一些理解
+#### [测试驱动开发的一些理解](http://blog.csdn.net/xiyanggudao/article/details/76315271)
 
 - 结硬寨（测试），打呆仗（开发）
 

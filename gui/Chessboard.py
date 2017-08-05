@@ -42,14 +42,44 @@ class Chessboard:
 		self.__painter.drawRectangle(x, y, width, height, 2)
 
 	def __drawGrid(self):
-		pass
+		for row in range(1, 4):
+			x1,y1 = self.__posCalculator.positionAtCoordinate(0,row)
+			x2,y2 = self.__posCalculator.positionAtCoordinate(8,row)
+			self.__painter.drawLine(x1,y1,x2,y2,1)
+		for row in range(6, 9):
+			x1,y1 = self.__posCalculator.positionAtCoordinate(0,row)
+			x2,y2 = self.__posCalculator.positionAtCoordinate(8,row)
+			self.__painter.drawLine(x1,y1,x2,y2,1)
+		for col in range(1, 8):
+			x1, y1 = self.__posCalculator.positionAtCoordinate(col, 0)
+			x2, y2 = self.__posCalculator.positionAtCoordinate(col, 4)
+			self.__painter.drawLine(x1, y1, x2, y2, 1)
+			x1, y1 = self.__posCalculator.positionAtCoordinate(col, 5)
+			x2, y2 = self.__posCalculator.positionAtCoordinate(col, 9)
+			self.__painter.drawLine(x1, y1, x2, y2, 1)
 
 	def __drawCross(self):
-		pass
+		x1,y1 = self.__posCalculator.positionAtCoordinate(3,0)
+		x2,y2 = self.__posCalculator.positionAtCoordinate(5,2)
+		self.__painter.drawLine(x1,y1,x2,y2,1)
+		x1,y1 = self.__posCalculator.positionAtCoordinate(5,0)
+		x2,y2 = self.__posCalculator.positionAtCoordinate(3,2)
+		self.__painter.drawLine(x1,y1,x2,y2,1)
+		x1,y1 = self.__posCalculator.positionAtCoordinate(3,7)
+		x2,y2 = self.__posCalculator.positionAtCoordinate(5,9)
+		self.__painter.drawLine(x1,y1,x2,y2,1)
+		x1,y1 = self.__posCalculator.positionAtCoordinate(5,7)
+		x2,y2 = self.__posCalculator.positionAtCoordinate(3,9)
+		self.__painter.drawLine(x1,y1,x2,y2,1)
 
 	# 楚河汉界
 	def __drawBoundary(self):
-		pass
+		x1,y1 = self.__posCalculator.positionAtCoordinate(0,4)
+		x2,y2 = self.__posCalculator.positionAtCoordinate(8,4)
+		self.__painter.drawLine(x1,y1,x2,y2,2)
+		x1,y1 = self.__posCalculator.positionAtCoordinate(0,5)
+		x2,y2 = self.__posCalculator.positionAtCoordinate(8,5)
+		self.__painter.drawLine(x1,y1,x2,y2,2)
 
 	def __drawChessman(self, chess):
 		color = '#880000' if chess.color == Chessman.red else '#111111'
