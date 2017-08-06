@@ -18,6 +18,8 @@ class Chessboard:
 
 		self.__chessmenOnBoard = []
 
+		self.__selection = []
+
 	def __positionAtScreen(self, x, y):
 		# 棋盘坐标左下角为原点，屏幕坐标左上角为原点，需要转换
 		y = 9-y
@@ -38,6 +40,9 @@ class Chessboard:
 
 	def __onLButtonClick(self, event):
 		pos = self.__positionAtBoard(event.x, event.y)
+		if pos:
+			self.__selection.append(pos)
+			self.refresh()
 		print(pos)
 
 	def __drawBackground(self):
@@ -138,7 +143,19 @@ class Chessboard:
 			self.__drawChessman(chess)
 
 	def __drawSelection(self):
-		pass
+		radius = self.__posCalculator.chessmanSize()//2
+		lineLen = radius//3
+		color = '#3333aa'
+		for pos in self.__selection:
+			x, y = self.__positionAtScreen(pos[0], pos[1])
+			self.__painter.drawLine(x-radius,y-radius,x-radius+lineLen,y-radius,2,color)
+			self.__painter.drawLine(x-radius,y-radius,x-radius,y-radius+lineLen,2,color)
+			self.__painter.drawLine(x+radius,y-radius,x+radius-lineLen,y-radius,2,color)
+			self.__painter.drawLine(x+radius,y-radius,x+radius,y-radius+lineLen,2,color)
+			self.__painter.drawLine(x-radius,y+radius,x-radius+lineLen,y+radius,2,color)
+			self.__painter.drawLine(x-radius,y+radius,x-radius,y+radius-lineLen,2,color)
+			self.__painter.drawLine(x+radius,y+radius,x+radius-lineLen,y+radius,2,color)
+			self.__painter.drawLine(x+radius,y+radius,x+radius,y+radius-lineLen,2,color)
 
 	def minimumSize(self):
 		return self.__posCalculator.boardSizeForFixedChessmanSize(50)

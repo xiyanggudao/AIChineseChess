@@ -29,8 +29,8 @@ class ChessboardPainter:
 	def drawRectangle(self, x, y, width, height, boardWidth):
 		self.__canvas.create_rectangle(x, y, x+width, y+height, width=boardWidth,tag='x')
 
-	def drawLine(self, x1, y1, x2, y2, width):
-		self.__canvas.create_line(x1, y1, x2, y2, width=width,tag='x')
+	def drawLine(self, x1, y1, x2, y2, width, color='black'):
+		self.__canvas.create_line(x1, y1, x2, y2, width=width,fill=color,tag='x')
 
 	# (x, y) 是棋子中心的坐标
 	def drawChess(self, x, y, name):
