@@ -13,15 +13,25 @@ class Chessboard:
 		self.__painter.setChessBaseColor('#888811')
 
 		self.__posCalculator = PositionCalculator()
-		self.__posCalculator.setPadding(7)
 		self.__posCalculator.setChessmanSpacing(5)
 		self.__posCalculator.setBoundarySpacing(3)
 
 		self.__chessmenOnBoard = []
 
+	def __positionAtScreen(self, x, y):
+		# 棋盘坐标左下角为原点，屏幕坐标左上角为原点，需要转换
+		y = 9-y
+		return self.__posCalculator.positionAtScreen(x, y)
+
+	def __positionAtBoard(self, x, y):
+		pass
+
 	def __onResize(self, event):
 		self.__posCalculator.setChessboardSize(event.width, event.height)
 		self.__posCalculator.setMargin(self.__posCalculator.chessmanSize()//2+5)
+		self.__posCalculator.setPadding(self.__posCalculator.chessmanSize()//8)
+
+		self.__painter.setChessSize(self.__posCalculator.chessmanSize())
 		self.refresh()
 
 	def __onLButtonClick(self, event):
@@ -43,49 +53,81 @@ class Chessboard:
 
 	def __drawGrid(self):
 		for row in range(1, 4):
-			x1,y1 = self.__posCalculator.positionAtCoordinate(0,row)
-			x2,y2 = self.__posCalculator.positionAtCoordinate(8,row)
+			x1,y1 = self.__positionAtScreen(0, row)
+			x2,y2 = self.__positionAtScreen(8, row)
 			self.__painter.drawLine(x1,y1,x2,y2,1)
 		for row in range(6, 9):
-			x1,y1 = self.__posCalculator.positionAtCoordinate(0,row)
-			x2,y2 = self.__posCalculator.positionAtCoordinate(8,row)
+			x1,y1 = self.__positionAtScreen(0, row)
+			x2,y2 = self.__positionAtScreen(8, row)
 			self.__painter.drawLine(x1,y1,x2,y2,1)
 		for col in range(1, 8):
-			x1, y1 = self.__posCalculator.positionAtCoordinate(col, 0)
-			x2, y2 = self.__posCalculator.positionAtCoordinate(col, 4)
+			x1, y1 = self.__positionAtScreen(col, 0)
+			x2, y2 = self.__positionAtScreen(col, 4)
 			self.__painter.drawLine(x1, y1, x2, y2, 1)
-			x1, y1 = self.__posCalculator.positionAtCoordinate(col, 5)
-			x2, y2 = self.__posCalculator.positionAtCoordinate(col, 9)
+			x1, y1 = self.__positionAtScreen(col, 5)
+			x2, y2 = self.__positionAtScreen(col, 9)
 			self.__painter.drawLine(x1, y1, x2, y2, 1)
 
 	def __drawCross(self):
-		x1,y1 = self.__posCalculator.positionAtCoordinate(3,0)
-		x2,y2 = self.__posCalculator.positionAtCoordinate(5,2)
+		x1,y1 = self.__positionAtScreen(3, 0)
+		x2,y2 = self.__positionAtScreen(5, 2)
 		self.__painter.drawLine(x1,y1,x2,y2,1)
-		x1,y1 = self.__posCalculator.positionAtCoordinate(5,0)
-		x2,y2 = self.__posCalculator.positionAtCoordinate(3,2)
+		x1,y1 = self.__positionAtScreen(5, 0)
+		x2,y2 = self.__positionAtScreen(3, 2)
 		self.__painter.drawLine(x1,y1,x2,y2,1)
-		x1,y1 = self.__posCalculator.positionAtCoordinate(3,7)
-		x2,y2 = self.__posCalculator.positionAtCoordinate(5,9)
+		x1,y1 = self.__positionAtScreen(3, 7)
+		x2,y2 = self.__positionAtScreen(5, 9)
 		self.__painter.drawLine(x1,y1,x2,y2,1)
-		x1,y1 = self.__posCalculator.positionAtCoordinate(5,7)
-		x2,y2 = self.__posCalculator.positionAtCoordinate(3,9)
+		x1,y1 = self.__positionAtScreen(5, 7)
+		x2,y2 = self.__positionAtScreen(3, 9)
 		self.__painter.drawLine(x1,y1,x2,y2,1)
 
 	# 楚河汉界
 	def __drawBoundary(self):
-		x1,y1 = self.__posCalculator.positionAtCoordinate(0,4)
-		x2,y2 = self.__posCalculator.positionAtCoordinate(8,4)
+		x1,y1 = self.__positionAtScreen(0, 4)
+		x2,y2 = self.__positionAtScreen(8, 4)
 		self.__painter.drawLine(x1,y1,x2,y2,2)
-		x1,y1 = self.__posCalculator.positionAtCoordinate(0,5)
-		x2,y2 = self.__posCalculator.positionAtCoordinate(8,5)
+		x1,y1 = self.__positionAtScreen(0, 5)
+		x2,y2 = self.__positionAtScreen(8, 5)
 		self.__painter.drawLine(x1,y1,x2,y2,2)
+
+		x1,y1 = self.__positionAtScreen(1, 4)
+		x2,y2 = self.__positionAtScreen(2, 5)
+		self.__painter.drawText((x1+x2)//2, (y1+y2)//2, '楚')
+		x1,y1 = self.__positionAtScreen(2, 4)
+		x2,y2 = self.__positionAtScreen(3, 5)
+		self.__painter.drawText((x1+x2)//2, (y1+y2)//2, '河')
+		x1,y1 = self.__positionAtScreen(5, 4)
+		x2,y2 = self.__positionAtScreen(6, 5)
+		self.__painter.drawText((x1+x2)//2, (y1+y2)//2, '漢')
+		x1,y1 = self.__positionAtScreen(6, 4)
+		x2,y2 = self.__positionAtScreen(7, 5)
+		self.__painter.drawText((x1+x2)//2, (y1+y2)//2, '界')
+
+	def __drawFoldLine(self):
+		space = self.__posCalculator.chessmanSize()//12
+		length = self.__posCalculator.chessmanSize()//4
+		foldLinePos = [
+			(1, 2), (7, 2), (0, 3), (2, 3), (4, 3), (6, 3), (8, 3),
+			(1, 7), (7, 7), (0, 6), (2, 6), (4, 6), (6, 6), (8, 6)
+		]
+		for pos in foldLinePos:
+			x, y = self.__positionAtScreen(pos[0], pos[1])
+			if (pos[0] > 0):
+				self.__painter.drawLine(x-space, y+space, x-space, y+space+length, 1)
+				self.__painter.drawLine(x-space, y+space, x-space-length, y+space, 1)
+				self.__painter.drawLine(x-space, y-space, x-space, y-space-length, 1)
+				self.__painter.drawLine(x-space, y-space, x-space-length, y-space, 1)
+			if (pos[0] < 8):
+				self.__painter.drawLine(x+space, y+space, x+space, y+space+length, 1)
+				self.__painter.drawLine(x+space, y+space, x+space+length, y+space, 1)
+				self.__painter.drawLine(x+space, y-space, x+space, y-space-length, 1)
+				self.__painter.drawLine(x+space, y-space, x+space+length, y-space, 1)
 
 	def __drawChessman(self, chess):
 		color = '#880000' if chess.color == Chessman.red else '#111111'
 		self.__painter.setChessColor(color)
-		self.__painter.setChessSize(self.__posCalculator.chessmanSize())
-		x, y = self.__posCalculator.positionAtCoordinate(chess.x, chess.y)
+		x, y = self.__positionAtScreen(chess.x, chess.y)
 		self.__painter.drawChess(x, y, Chessman.text(chess.identifier))
 
 	def __drawChessmen(self):
@@ -108,6 +150,7 @@ class Chessboard:
 		self.__drawGrid()
 		self.__drawCross()
 		self.__drawBoundary()
+		self.__drawFoldLine()
 		self.__drawChessmen()
 		self.__drawSelection()
 

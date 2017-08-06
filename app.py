@@ -18,7 +18,7 @@ miniW, miniH = board.minimumSize()
 rootWindow.minsize(miniW, miniH)
 
 rootWindow.title('中国象棋')
-setWindowSize(rootWindow, miniW+3, miniH+3)
+setWindowSize(rootWindow, miniW, miniH+5)
 
 cv.pack(fill=tkinter.BOTH, expand=1)
 rootWindow.mainloop()

@@ -21,7 +21,7 @@ class PositionCalculator:
 		retY += self.__padding
 		return (retX, retY)
 
-	def positionAtCoordinate(self, x, y):
+	def positionAtScreen(self, x, y):
 		retX, retY = self.borderPos()
 		cellSize = self.chessmanSize() + self.__chessmanSpacing
 		retX += cellSize * x
