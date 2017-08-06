@@ -30,6 +30,29 @@ class PositionCalculator:
 			retY += self.__boundarySpacing
 		return (retX, retY)
 
+	def positionAtBoard(self, x, y):
+		originX, originY = self.borderPos()
+		x -= originX
+		y -= originY
+		chessmanSize = self.chessmanSize()
+		radius = chessmanSize//2
+		cellSize = chessmanSize + self.__chessmanSpacing
+		x += radius
+		y += radius
+		if x < 0 or y < 0:
+			return
+		if y > 5*cellSize+self.__boundarySpacing:
+			y -= self.__boundarySpacing
+		elif y >= 5*cellSize:
+			return
+		retX = x//cellSize
+		retY = y//cellSize
+		if x-retX*cellSize > chessmanSize or y-retY*cellSize > chessmanSize:
+			return
+		if retX>8 or retY>9:
+			return
+		return (retX, retY)
+
 	def chessmanSize(self):
 		maxWidth = self.__width
 		maxWidth -= 2*self.__margin

@@ -131,7 +131,7 @@ class TestPositionCalculator(unittest.TestCase):
 		posCalculator.setPadding(1)
 		self.assertEqual(posCalculator.borderSize(), (72, 91))
 
-	def testCalculateCoordinatePos(self):
+	def testCalculatePosAtScreen(self):
 		posCalculator = PositionCalculator()
 		posCalculator.setChessboardSize(80, 100)
 		posCalculator.setBoundarySpacing(10)
@@ -169,6 +169,40 @@ class TestPositionCalculator(unittest.TestCase):
 		self.assertEqual(posCalculator.outlinePos(), (10, 0))
 		self.assertEqual(posCalculator.positionAtScreen(0, 0), (10, 0))
 		self.assertEqual(posCalculator.positionAtScreen(8, 9), (90, 90))
+
+	# 暴力求解验证
+	def calculatePosAtBoard(self, posCalculator, x, y):
+		radius = posCalculator.chessmanSize()//2
+		for xAtBoard in range(0, 9):
+			for yAtBoard in range(0, 10):
+				xAtScreen, yAtScreen = posCalculator.positionAtScreen(xAtBoard, yAtBoard)
+				if abs(x - xAtScreen) < radius and abs(y - yAtScreen) < radius:
+					return (True, (xAtBoard, yAtBoard))
+				# 边界不测
+				elif abs(x - xAtScreen) == radius or abs(y - yAtScreen) == radius:
+					return  (False, None)
+		return (True, None)
+
+	def testCalculatePosAtBoard(self):
+		posCalculator = PositionCalculator()
+		posCalculator.setChessmanSpacing(10)
+		posCalculator.setBoundarySpacing(20)
+		posCalculator.setPadding(30)
+		posCalculator.setMargin(40)
+		chessSize = 50
+		width, height = posCalculator.boardSizeForFixedChessmanSize(chessSize)
+		width += 13
+		height += 7
+		posCalculator.setChessboardSize(width, height)
+		self.assertEqual(chessSize, posCalculator.chessmanSize())
+		print(posCalculator.borderPos())
+		# 测试棋盘对角线上面的所有的点
+		for y in range(0, height):
+			x = int(y/height*width)
+			testPos = posCalculator.positionAtBoard(x, y)
+			truePos = self.calculatePosAtBoard(posCalculator, x, y)
+			if (truePos[0]):
+				self.assertEqual(testPos, truePos[1], str((x, y)) + ' --> '+str(truePos[1]))
 
 
 if __name__ == '__main__':

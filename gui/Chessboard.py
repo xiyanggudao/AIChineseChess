@@ -24,7 +24,9 @@ class Chessboard:
 		return self.__posCalculator.positionAtScreen(x, y)
 
 	def __positionAtBoard(self, x, y):
-		pass
+		pos = self.__posCalculator.positionAtBoard(x, y)
+		if pos:
+			return (pos[0], 9-pos[1])
 
 	def __onResize(self, event):
 		self.__posCalculator.setChessboardSize(event.width, event.height)
@@ -35,7 +37,8 @@ class Chessboard:
 		self.refresh()
 
 	def __onLButtonClick(self, event):
-		print(event.x, event.y)
+		pos = self.__positionAtBoard(event.x, event.y)
+		print(pos)
 
 	def __drawBackground(self):
 		width, height = self.__posCalculator.boardSize()
