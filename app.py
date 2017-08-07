@@ -6,6 +6,11 @@ def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
 	window.geometry(geometry)
 
+def onClick(pos):
+	if pos:
+		board.addToSelection(pos)
+		board.refresh()
+
 rootWindow = tkinter.Tk()
 
 cv = tkinter.Canvas(rootWindow)
@@ -13,6 +18,8 @@ cv = tkinter.Canvas(rootWindow)
 game = Chessgame()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.aliveChessmen())
+
+board.setMoveEventListener(onClick)
 
 miniW, miniH = board.minimumSize()
 rootWindow.minsize(miniW, miniH)

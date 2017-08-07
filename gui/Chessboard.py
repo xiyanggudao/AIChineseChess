@@ -19,6 +19,7 @@ class Chessboard:
 		self.__chessmenOnBoard = []
 
 		self.__selection = []
+		self.__onClickListener = None
 
 	def __positionAtScreen(self, x, y):
 		# 棋盘坐标左下角为原点，屏幕坐标左上角为原点，需要转换
@@ -40,10 +41,8 @@ class Chessboard:
 
 	def __onLButtonClick(self, event):
 		pos = self.__positionAtBoard(event.x, event.y)
-		if pos:
-			self.__selection.append(pos)
-			self.refresh()
-		print(pos)
+		if self.__onClickListener:
+			self.__onClickListener(pos)
 
 	def __drawBackground(self):
 		width, height = self.__posCalculator.boardSize()
@@ -174,5 +173,14 @@ class Chessboard:
 		self.__drawChessmen()
 		self.__drawSelection()
 
-	def setOnMoveListener(self, listener):
-		pass
+	def setMoveEventListener(self, listener):
+		self.__onClickListener = listener
+
+	def selectionSize(self):
+		return len(self.__selection)
+
+	def addToSelection(self, pos):
+		self.__selection.append(pos)
+
+	def selectedPos(self, index):
+		return self.__selection[index]
