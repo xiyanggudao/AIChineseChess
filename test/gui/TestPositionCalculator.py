@@ -195,7 +195,6 @@ class TestPositionCalculator(unittest.TestCase):
 		height += 7
 		posCalculator.setChessboardSize(width, height)
 		self.assertEqual(chessSize, posCalculator.chessmanSize())
-		print(posCalculator.borderPos())
 		# 测试棋盘对角线上面的所有的点
 		for y in range(0, height):
 			x = int(y/height*width)

@@ -7,8 +7,24 @@ def setWindowSize(window, width, height):
 	window.geometry(geometry)
 
 def onClick(pos):
-	if pos:
+	if pos == None:
+		return
+	selectionSize = board.selectionSize()
+	if selectionSize == 0:
+		chessmanId = game.chessmanAt(pos)
+		if chessmanId:
+			board.addToSelection(pos)
+			board.refresh()
+	elif selectionSize == 1:
 		board.addToSelection(pos)
+		game.makeMove(board.selectedPos(0), board.selectedPos(1))
+		board.setChessmenOnBoard(game.aliveChessmen())
+		board.refresh()
+	elif selectionSize == 2:
+		board.clearSelection()
+		chessmanId = game.chessmanAt(pos)
+		if chessmanId:
+			board.addToSelection(pos)
 		board.refresh()
 
 rootWindow = tkinter.Tk()

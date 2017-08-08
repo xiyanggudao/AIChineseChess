@@ -26,6 +26,10 @@ class Chessman:
 		return identifier & 0x8
 
 	@staticmethod
+	def oppositeColor(color):
+		return color ^ 0x8
+
+	@staticmethod
 	def text(identifier):
 		allText = [
 			'空','帥','仕','相','馬','車','砲','兵',

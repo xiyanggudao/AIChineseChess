@@ -91,6 +91,10 @@ class TestChessman(unittest.TestCase):
 		self.assertEqual(Chessman.color(redKing), Chessman.red)
 		self.assertEqual(Chessman.color(blackKing), Chessman.black)
 
+	def testOppositeColor(self):
+		self.assertEqual(Chessman.oppositeColor(Chessman.red), Chessman.black)
+		self.assertEqual(Chessman.oppositeColor(Chessman.black), Chessman.red)
+
 
 if __name__ == '__main__':
 	unittest.main()

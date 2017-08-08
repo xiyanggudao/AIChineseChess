@@ -184,3 +184,6 @@ class Chessboard:
 
 	def selectedPos(self, index):
 		return self.__selection[index]
+
+	def clearSelection(self):
+		self.__selection.clear()

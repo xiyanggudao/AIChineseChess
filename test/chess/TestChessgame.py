@@ -1,6 +1,7 @@
 import unittest
 from chess.Chessgame import Chessgame
-from chess.Chessgame import ChessmanOnBoard
+from chess.ChessData import ChessmanOnBoard
+from chess.ChessData import Move
 from chess.Chessman import Chessman
 
 
@@ -60,6 +61,27 @@ class TestChessgame(unittest.TestCase):
 				else:
 					self.assertTrue(False)
 		self.assertEqual(len(aliveChessmen), 32)
+
+	def testChessmanAtPosition(self):
+		game = Chessgame()
+		self.assertEqual(game.chessmanAt((0, 1)), None)
+		self.assertEqual(game.chessmanAt((0, 0)), Chessman.identifier(Chessman.rook, Chessman.red))
+
+	def testActiveColor(self):
+		game = Chessgame()
+		self.assertEqual(game.activeColor(), Chessman.red)
+
+	def testMakeMoveNoEat(self):
+		game = Chessgame()
+		game.makeMove((1, 2), (4, 2))
+		self.assertEqual(game.moveSize(), 1)
+		self.assertEqual(game.activeColor(), Chessman.black)
+		self.assertEqual(game.lastMove(), Move((1, 2), (4, 2), Chessman.identifier(Chessman.cannon, Chessman.red), None))
+		self.assertEqual(game.chessmanAt((1, 2)), None)
+		self.assertEqual(game.chessmanAt((4, 2)), Chessman.identifier(Chessman.cannon, Chessman.red))
+
+	def testMakeMoveEat(self):
+		pass
 
 
 if __name__ == '__main__':

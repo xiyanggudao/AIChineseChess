@@ -1,4 +1,6 @@
-from chess.ChessData import *
+from chess.Chessman import Chessman
+from chess.ChessData import ChessmanOnBoard
+from chess.ChessData import Move
 
 class Chessgame:
 
@@ -31,19 +33,26 @@ class Chessgame:
 			(1, 7), (7, 7), (0, 6), (2, 6), (4, 6), (6, 6), (8, 6)
 		]
 
+		self.__activeColor = Chessman.red
+		self.__moves = []
+
 	def moveSize(self):
-		return 0
+		return len(self.__moves)
 
 	def moveAt(self):
 		pass
 
 	def makeMove(self, fromPos, toPos):
-		pass
+		self.__moves.append(Move(fromPos, toPos, self.chessmanAt(fromPos), self.chessmanAt(toPos)))
+		self.__activeColor = Chessman.oppositeColor(self.__activeColor)
+		for i in range(0, 32):
+			if self.__position[i] == toPos:
+				self.__position[i] = None
+		for i in range(0, 32):
+			if self.__position[i] == fromPos:
+				self.__position[i] = toPos
 
 	def undoMove(self):
-		pass
-
-	def redoMove(self):
 		pass
 
 	def aliveChessmen(self):
@@ -53,3 +62,15 @@ class Chessgame:
 				chess = ChessmanOnBoard(self.__position[i], self.__chessmen[i])
 				ret.append(chess)
 		return ret
+
+	def chessmanAt(self, pos):
+		for i in range(0, 32):
+			if self.__position[i] == pos:
+				return self.__chessmen[i]
+
+	def activeColor(self):
+		return self.__activeColor
+
+	def lastMove(self):
+		if len(self.__moves) > 0:
+			return self.__moves[len(self.__moves) - 1]

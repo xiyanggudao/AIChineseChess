@@ -33,11 +33,22 @@ class ChessmanOnBoard:
 # 走棋数据，提供外面访问走棋历史的接口
 class Move:
 
-	def __init__(self, moveChessman, fromPos, toPos, ateChessman):
+	def __init__(self, fromPos, toPos, moveChessman, ateChessman):
 		self.__fromPos = fromPos
 		self.__toPos = toPos
 		self.__moveChessman = moveChessman
 		self.__ateChessman = ateChessman
+
+	def __eq__(self, other):
+		if self.__fromPos != other.__fromPos:
+			return False
+		if self.__toPos != other.__toPos:
+			return False
+		if self.__moveChessman != other.__moveChessman:
+			return False
+		if self.__ateChessman != other.__ateChessman:
+			return False
+		return True
 
 	@property
 	def fromPos(self):
