@@ -47,7 +47,7 @@ class TestChessgame(unittest.TestCase):
 			[bRook,bKnight,bElephant,bMandarin,bKing,bMandarin,bElephant,bKnight,bRook]
 		]
 
-		aliveChessmen = game.aliveChessmen()
+		aliveChessmen = game.chessmenOnBoard()
 		for chess in aliveChessmen:
 			self.assertEqual(chess.identifier, board[chess.y][chess.x], chess.position)
 		for x in range(0, 9):
@@ -79,9 +79,18 @@ class TestChessgame(unittest.TestCase):
 		self.assertEqual(game.lastMove(), Move((1, 2), (4, 2), Chessman.identifier(Chessman.cannon, Chessman.red), None))
 		self.assertEqual(game.chessmanAt((1, 2)), None)
 		self.assertEqual(game.chessmanAt((4, 2)), Chessman.identifier(Chessman.cannon, Chessman.red))
+		self.assertEqual(len(game.chessmenOnBoard()), 32)
 
 	def testMakeMoveEat(self):
-		pass
+		game = Chessgame()
+		game.makeMove((1, 2), (1, 9))
+		self.assertEqual(game.moveSize(), 1)
+		self.assertEqual(game.activeColor(), Chessman.black)
+		self.assertEqual(game.lastMove(), Move((1, 2), (1, 9),
+			Chessman.identifier(Chessman.cannon, Chessman.red), Chessman.identifier(Chessman.knight, Chessman.black)))
+		self.assertEqual(game.chessmanAt((1, 2)), None)
+		self.assertEqual(game.chessmanAt((1, 9)), Chessman.identifier(Chessman.cannon, Chessman.red))
+		self.assertEqual(len(game.chessmenOnBoard()), 31)
 
 
 if __name__ == '__main__':

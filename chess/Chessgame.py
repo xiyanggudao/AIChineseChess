@@ -55,7 +55,7 @@ class Chessgame:
 	def undoMove(self):
 		pass
 
-	def aliveChessmen(self):
+	def chessmenOnBoard(self):
 		ret = list()
 		for i in range(0, 32):
 			if self.__position[i] != None:

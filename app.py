@@ -18,7 +18,7 @@ def onClick(pos):
 	elif selectionSize == 1:
 		board.addToSelection(pos)
 		game.makeMove(board.selectedPos(0), board.selectedPos(1))
-		board.setChessmenOnBoard(game.aliveChessmen())
+		board.setChessmenOnBoard(game.chessmenOnBoard())
 		board.refresh()
 	elif selectionSize == 2:
 		board.clearSelection()
@@ -33,7 +33,7 @@ cv = tkinter.Canvas(rootWindow)
 
 game = Chessgame()
 board = Chessboard(cv)
-board.setChessmenOnBoard(game.aliveChessmen())
+board.setChessmenOnBoard(game.chessmenOnBoard())
 
 board.setMoveEventListener(onClick)
 
