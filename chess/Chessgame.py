@@ -5,20 +5,20 @@ from chess.ChessData import Move
 class Chessgame:
 
 	def __init__(self):
-		rKing = Chessman.identifier(Chessman.king, Chessman.red)
-		rMandarin = Chessman.identifier(Chessman.mandarin, Chessman.red)
-		rElephant = Chessman.identifier(Chessman.elephant, Chessman.red)
-		rKnight = Chessman.identifier(Chessman.knight, Chessman.red)
-		rRook = Chessman.identifier(Chessman.rook, Chessman.red)
-		rCannon = Chessman.identifier(Chessman.cannon, Chessman.red)
-		rPawn = Chessman.identifier(Chessman.pawn, Chessman.red)
-		bKing = Chessman.identifier(Chessman.king, Chessman.black)
-		bMandarin = Chessman.identifier(Chessman.mandarin, Chessman.black)
-		bElephant = Chessman.identifier(Chessman.elephant, Chessman.black)
-		bKnight = Chessman.identifier(Chessman.knight, Chessman.black)
-		bRook = Chessman.identifier(Chessman.rook, Chessman.black)
-		bCannon = Chessman.identifier(Chessman.cannon, Chessman.black)
-		bPawn = Chessman.identifier(Chessman.pawn, Chessman.black)
+		rKing = Chessman.redKing()
+		rMandarin = Chessman.redMandarin()
+		rElephant = Chessman.redElephant()
+		rKnight = Chessman.redKnight()
+		rRook = Chessman.redRook()
+		rCannon = Chessman.redCannon()
+		rPawn = Chessman.redPawn()
+		bKing = Chessman.blackKing()
+		bMandarin = Chessman.blackMandarin()
+		bElephant = Chessman.blackElephant()
+		bKnight = Chessman.blackKnight()
+		bRook = Chessman.blackRook()
+		bCannon = Chessman.blackCannon()
+		bPawn = Chessman.blackPawn()
 
 		self.__chessmen = [
 			rKing,rMandarin,rMandarin,rElephant,rElephant,rKnight,rKnight,rRook,rRook,

@@ -95,6 +95,24 @@ class TestChessman(unittest.TestCase):
 		self.assertEqual(Chessman.oppositeColor(Chessman.red), Chessman.black)
 		self.assertEqual(Chessman.oppositeColor(Chessman.black), Chessman.red)
 
+	def testStaticIdentifierMethod(self):
+		idSet = set()
+		idSet.add(Chessman.redKing())
+		idSet.add(Chessman.redMandarin())
+		idSet.add(Chessman.redElephant())
+		idSet.add(Chessman.redKnight())
+		idSet.add(Chessman.redRook())
+		idSet.add(Chessman.redCannon())
+		idSet.add(Chessman.redPawn())
+		idSet.add(Chessman.blackKing())
+		idSet.add(Chessman.blackMandarin())
+		idSet.add(Chessman.blackElephant())
+		idSet.add(Chessman.blackKnight())
+		idSet.add(Chessman.blackRook())
+		idSet.add(Chessman.blackCannon())
+		idSet.add(Chessman.blackPawn())
+		self.assertEqual(len(idSet), 14)
+
 
 if __name__ == '__main__':
 	unittest.main()

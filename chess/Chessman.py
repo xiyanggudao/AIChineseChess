@@ -30,6 +30,62 @@ class Chessman:
 		return color ^ 0x8
 
 	@staticmethod
+	def redKing():
+		return Chessman.identifier(Chessman.king, Chessman.red)
+
+	@staticmethod
+	def redMandarin():
+		return Chessman.identifier(Chessman.mandarin, Chessman.red)
+
+	@staticmethod
+	def redElephant():
+		return Chessman.identifier(Chessman.elephant, Chessman.red)
+
+	@staticmethod
+	def redKnight():
+		return Chessman.identifier(Chessman.knight, Chessman.red)
+
+	@staticmethod
+	def redRook():
+		return Chessman.identifier(Chessman.rook, Chessman.red)
+
+	@staticmethod
+	def redCannon():
+		return Chessman.identifier(Chessman.cannon, Chessman.red)
+
+	@staticmethod
+	def redPawn():
+		return Chessman.identifier(Chessman.pawn, Chessman.red)
+
+	@staticmethod
+	def blackKing():
+		return Chessman.identifier(Chessman.king, Chessman.black)
+
+	@staticmethod
+	def blackMandarin():
+		return Chessman.identifier(Chessman.mandarin, Chessman.black)
+
+	@staticmethod
+	def blackElephant():
+		return Chessman.identifier(Chessman.elephant, Chessman.black)
+
+	@staticmethod
+	def blackKnight():
+		return Chessman.identifier(Chessman.knight, Chessman.black)
+
+	@staticmethod
+	def blackRook():
+		return Chessman.identifier(Chessman.rook, Chessman.black)
+
+	@staticmethod
+	def blackCannon():
+		return Chessman.identifier(Chessman.cannon, Chessman.black)
+
+	@staticmethod
+	def blackPawn():
+		return Chessman.identifier(Chessman.pawn, Chessman.black)
+
+	@staticmethod
 	def text(identifier):
 		allText = [
 			'空','帥','仕','相','馬','車','砲','兵',

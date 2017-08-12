@@ -1,39 +1,28 @@
 import unittest
 from chess.Chessgame import Chessgame
-from chess.ChessData import ChessmanOnBoard
 from chess.ChessData import Move
 from chess.Chessman import Chessman
 
-
-class TestChessmanOnBoard(unittest.TestCase):
-	def testProperty(self):
-		chess = ChessmanOnBoard((0, 1), Chessman.identifier(Chessman.rook, Chessman.black))
-		self.assertEqual(chess.identifier, Chessman.identifier(Chessman.rook, Chessman.black))
-		self.assertEqual(chess.position, (0, 1))
-		self.assertEqual(chess.type, Chessman.rook)
-		self.assertEqual(chess.color, Chessman.black)
-		self.assertEqual(chess.x, 0)
-		self.assertEqual(chess.y, 1)
 
 class TestChessgame(unittest.TestCase):
 	def testConstructorDefault(self):
 		game = Chessgame()
 		self.assertEqual(game.moveSize(), 0)
 
-		rKing = Chessman.identifier(Chessman.king, Chessman.red)
-		rMandarin = Chessman.identifier(Chessman.mandarin, Chessman.red)
-		rElephant = Chessman.identifier(Chessman.elephant, Chessman.red)
-		rKnight = Chessman.identifier(Chessman.knight, Chessman.red)
-		rRook = Chessman.identifier(Chessman.rook, Chessman.red)
-		rCannon = Chessman.identifier(Chessman.cannon, Chessman.red)
-		rPawn = Chessman.identifier(Chessman.pawn, Chessman.red)
-		bKing = Chessman.identifier(Chessman.king, Chessman.black)
-		bMandarin = Chessman.identifier(Chessman.mandarin, Chessman.black)
-		bElephant = Chessman.identifier(Chessman.elephant, Chessman.black)
-		bKnight = Chessman.identifier(Chessman.knight, Chessman.black)
-		bRook = Chessman.identifier(Chessman.rook, Chessman.black)
-		bCannon = Chessman.identifier(Chessman.cannon, Chessman.black)
-		bPawn = Chessman.identifier(Chessman.pawn, Chessman.black)
+		rKing = Chessman.redKing()
+		rMandarin = Chessman.redMandarin()
+		rElephant = Chessman.redElephant()
+		rKnight = Chessman.redKnight()
+		rRook = Chessman.redRook()
+		rCannon = Chessman.redCannon()
+		rPawn = Chessman.redPawn()
+		bKing = Chessman.blackKing()
+		bMandarin = Chessman.blackMandarin()
+		bElephant = Chessman.blackElephant()
+		bKnight = Chessman.blackKnight()
+		bRook = Chessman.blackRook()
+		bCannon = Chessman.blackCannon()
+		bPawn = Chessman.blackPawn()
 		board = [
 			[rRook,rKnight,rElephant,rMandarin,rKing,rMandarin,rElephant,rKnight,rRook],
 			[None,None,None,None,None,None,None,None,None],
@@ -65,7 +54,7 @@ class TestChessgame(unittest.TestCase):
 	def testChessmanAtPosition(self):
 		game = Chessgame()
 		self.assertEqual(game.chessmanAt((0, 1)), None)
-		self.assertEqual(game.chessmanAt((0, 0)), Chessman.identifier(Chessman.rook, Chessman.red))
+		self.assertEqual(game.chessmanAt((0, 0)), Chessman.redRook())
 
 	def testActiveColor(self):
 		game = Chessgame()
@@ -76,9 +65,9 @@ class TestChessgame(unittest.TestCase):
 		game.makeMove((1, 2), (4, 2))
 		self.assertEqual(game.moveSize(), 1)
 		self.assertEqual(game.activeColor(), Chessman.black)
-		self.assertEqual(game.lastMove(), Move((1, 2), (4, 2), Chessman.identifier(Chessman.cannon, Chessman.red), None))
+		self.assertEqual(game.lastMove(), Move((1, 2), (4, 2), Chessman.redCannon(), None))
 		self.assertEqual(game.chessmanAt((1, 2)), None)
-		self.assertEqual(game.chessmanAt((4, 2)), Chessman.identifier(Chessman.cannon, Chessman.red))
+		self.assertEqual(game.chessmanAt((4, 2)), Chessman.redCannon())
 		self.assertEqual(len(game.chessmenOnBoard()), 32)
 
 	def testMakeMoveEat(self):
@@ -87,9 +76,9 @@ class TestChessgame(unittest.TestCase):
 		self.assertEqual(game.moveSize(), 1)
 		self.assertEqual(game.activeColor(), Chessman.black)
 		self.assertEqual(game.lastMove(), Move((1, 2), (1, 9),
-			Chessman.identifier(Chessman.cannon, Chessman.red), Chessman.identifier(Chessman.knight, Chessman.black)))
+			Chessman.redCannon(), Chessman.blackKnight()))
 		self.assertEqual(game.chessmanAt((1, 2)), None)
-		self.assertEqual(game.chessmanAt((1, 9)), Chessman.identifier(Chessman.cannon, Chessman.red))
+		self.assertEqual(game.chessmanAt((1, 9)), Chessman.redCannon())
 		self.assertEqual(len(game.chessmenOnBoard()), 31)
 
 
