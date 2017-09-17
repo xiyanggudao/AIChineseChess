@@ -75,3 +75,16 @@ class ChessRule:
 
 	def isMoveOfBlackMandarinLegal(self, move):
 		return  self.__isMoveOfMandarinLegal(move, 7, 9)
+
+	def __isMoveOfElephantLegal(self, move, minY, maxY):
+		toX, toY = move.toPos
+		if not (0 <= toX <= 8 and minY <= toY <= maxY):
+			return False
+		fromX, fromY = move.fromPos
+		return abs(toX - fromX) == 2 and abs(toY - fromY) == 2
+
+	def isMoveOfRedElephantLegal(self, move):
+		return self.__isMoveOfElephantLegal(move, 0, 4)
+
+	def isMoveOfBlackElephantLegal(self, move):
+		return self.__isMoveOfElephantLegal(move, 5, 9)

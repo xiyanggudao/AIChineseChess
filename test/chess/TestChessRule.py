@@ -120,10 +120,20 @@ class TestChessRule(unittest.TestCase):
 		self.assertFalse(rule.isMoveOfBlackMandarinLegal(move))
 
 	def testMoveRuleOfRedElephant(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((2, 4), Chessman.redElephant())])
+		move = Move((2, 4), (0, 2), Chessman.redElephant(), None)
+		self.assertTrue(rule.isMoveOfRedElephantLegal(move))
+		move = Move((2, 4), (0, 6), Chessman.redElephant(), None)
+		self.assertFalse(rule.isMoveOfRedElephantLegal(move))
 
 	def testMoveRuleOfBlackElephant(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((6, 5), Chessman.blackElephant())])
+		move = Move((6, 5), (8, 7), Chessman.blackElephant(), None)
+		self.assertTrue(rule.isMoveOfBlackElephantLegal(move))
+		move = Move((6, 5), (8, 3), Chessman.blackElephant(), None)
+		self.assertFalse(rule.isMoveOfBlackElephantLegal(move))
 
 	def testMoveRuleOfKnight(self):
 		pass
