@@ -40,7 +40,7 @@ board.setMoveEventListener(onClick)
 miniW, miniH = board.minimumSize()
 rootWindow.minsize(miniW, miniH)
 
-rootWindow.title('中国象棋')
+rootWindow.title('中国象棋---妖刀')
 setWindowSize(rootWindow, miniW, miniH+5)
 
 cv.pack(fill=tkinter.BOTH, expand=1)

@@ -81,7 +81,10 @@ class ChessRule:
 		if not (0 <= toX <= 8 and minY <= toY <= maxY):
 			return False
 		fromX, fromY = move.fromPos
-		return abs(toX - fromX) == 2 and abs(toY - fromY) == 2
+		if not (abs(toX - fromX) == 2 and abs(toY - fromY) == 2):
+			return False
+		eyeX, eyeY = (fromX + toX)//2, (fromY + toY)//2
+		return self.__board[eyeY][eyeX] == None
 
 	def isMoveOfRedElephantLegal(self, move):
 		return self.__isMoveOfElephantLegal(move, 0, 4)

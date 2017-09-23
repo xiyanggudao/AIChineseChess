@@ -135,6 +135,17 @@ class TestChessRule(unittest.TestCase):
 		move = Move((6, 5), (8, 3), Chessman.blackElephant(), None)
 		self.assertFalse(rule.isMoveOfBlackElephantLegal(move))
 
+	def testMoveRuleOfElephantEye(self):
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((6, 5), Chessman.blackElephant())])
+		move = Move((6, 5), (8, 7), Chessman.blackElephant(), None)
+		self.assertTrue(rule.isMoveOfBlackElephantLegal(move))
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((6, 5), Chessman.blackElephant()),
+			ChessmanOnBoard((7, 6), Chessman.blackRook())])
+		move = Move((6, 5), (8, 7), Chessman.blackElephant(), None)
+		self.assertFalse(rule.isMoveOfBlackElephantLegal(move))
+
 	def testMoveRuleOfKnight(self):
 		pass
 
