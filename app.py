@@ -1,6 +1,9 @@
 import tkinter
 from gui.Chessboard import Chessboard
 from chess.Chessgame import Chessgame
+from chess.ChessData import Move
+from chess.ChessRule import ChessRule
+from chess.Chessman import Chessman
 
 def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
@@ -12,13 +15,20 @@ def onClick(pos):
 	selectionSize = board.selectionSize()
 	if selectionSize == 0:
 		chessmanId = game.chessmanAt(pos)
-		if chessmanId:
+		if chessmanId and Chessman.color(chessmanId) == game.activeColor():
 			board.addToSelection(pos)
 			board.refresh()
 	elif selectionSize == 1:
 		board.addToSelection(pos)
-		game.makeMove(board.selectedPos(0), board.selectedPos(1))
-		board.setChessmenOnBoard(game.chessmenOnBoard())
+		move = Move(board.selectedPos(0), board.selectedPos(1),
+			game.chessmanAt(board.selectedPos(0)), game.chessmanAt(board.selectedPos(1)))
+		rule.setChessmenOnBoard(game.chessmenOnBoard())
+		rule.setActiveColor(game.activeColor())
+		if rule.isMoveLegal(move):
+			game.makeMove(board.selectedPos(0), board.selectedPos(1))
+			board.setChessmenOnBoard(game.chessmenOnBoard())
+		else:
+			board.clearSelection()
 		board.refresh()
 	elif selectionSize == 2:
 		board.clearSelection()
@@ -34,6 +44,7 @@ cv = tkinter.Canvas(rootWindow)
 game = Chessgame()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
+rule = ChessRule()
 
 board.setMoveEventListener(onClick)
 

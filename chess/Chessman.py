@@ -14,6 +14,10 @@ class Chessman:
 	black = 8
 
 	@staticmethod
+	def invalid():
+		return 0
+
+	@staticmethod
 	def identifier(type, color):
 		return type | color
 

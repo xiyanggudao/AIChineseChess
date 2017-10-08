@@ -77,7 +77,11 @@ class TestChessman(unittest.TestCase):
 		self.assertFalse(value in idSet)
 		idSet.add(value)
 
-		self.assertEqual(len(idSet), 14)
+		value = Chessman.invalid()
+		self.assertFalse(value in idSet)
+		idSet.add(value)
+
+		self.assertEqual(len(idSet), 15)
 
 	def testIdentifierTransform(self):
 		redKing = Chessman.identifier(Chessman.king, Chessman.red)
@@ -111,7 +115,8 @@ class TestChessman(unittest.TestCase):
 		idSet.add(Chessman.blackRook())
 		idSet.add(Chessman.blackCannon())
 		idSet.add(Chessman.blackPawn())
-		self.assertEqual(len(idSet), 14)
+		idSet.add(Chessman.invalid())
+		self.assertEqual(len(idSet), 15)
 
 
 if __name__ == '__main__':

@@ -23,12 +23,19 @@ class TestChessRule(unittest.TestCase):
 		move = Move((0, 2), (4, 10), None, None)
 		self.assertFalse(rule.isPositionRangeLegal(move))
 
+	def testMoveToOrigin(self):
+		rule = ChessRule()
+		move = Move((1, 2), (1, 2), None, None)
+		self.assertFalse(rule.isPositionRangeLegal(move))
+
 	def testIsMoveConformToChessboard(self):
 		game = Chessgame()
 		rule = ChessRule()
 		rule.setChessmenOnBoard(game.chessmenOnBoard())
 		rule.setActiveColor(game.activeColor())
 		move = Move((1, 2), (4, 2), Chessman.redCannon(), None)
+		self.assertTrue(rule.isMoveConformToChessboard(move))
+		move = Move((1, 2), (1, 9), Chessman.redCannon(), Chessman.blackKnight())
 		self.assertTrue(rule.isMoveConformToChessboard(move))
 		move = Move((1, 2), (4, 2), None, None)
 		self.assertFalse(rule.isMoveConformToChessboard(move))
@@ -85,6 +92,25 @@ class TestChessRule(unittest.TestCase):
 		self.assertFalse(rule.isMoveOfBlackKingLegal(move))
 		rule.setChessmenOnBoard([ChessmanOnBoard((4, 9), Chessman.blackKing())])
 		move = Move((4, 9), (4, 10), Chessman.blackKing(), None)
+		self.assertFalse(rule.isMoveOfBlackKingLegal(move))
+
+	def testKingToKing(self):
+		rule = ChessRule()
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((4, 0), Chessman.redKing()),
+			ChessmanOnBoard((4, 9), Chessman.blackKing())])
+		move = Move((4, 0), (4, 9), Chessman.redKing(), Chessman.blackKing())
+		self.assertTrue(rule.isMoveOfRedKingLegal(move))
+		move = Move((4, 9), (4, 0), Chessman.blackKing(), Chessman.redKing())
+		self.assertTrue(rule.isMoveOfBlackKingLegal(move))
+
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((4, 0), Chessman.redKing()),
+			ChessmanOnBoard((4, 9), Chessman.blackKing()),
+			ChessmanOnBoard((4, 5), Chessman.redCannon())])
+		move = Move((4, 0), (4, 9), Chessman.redKing(), Chessman.blackKing())
+		self.assertFalse(rule.isMoveOfRedKingLegal(move))
+		move = Move((4, 9), (4, 0), Chessman.blackKing(), Chessman.redKing())
 		self.assertFalse(rule.isMoveOfBlackKingLegal(move))
 
 	def testMoveRuleOfRedMandarin(self):
@@ -147,28 +173,95 @@ class TestChessRule(unittest.TestCase):
 		self.assertFalse(rule.isMoveOfBlackElephantLegal(move))
 
 	def testMoveRuleOfKnight(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((2, 2), Chessman.redKnight())])
+		move = Move((2, 2), (1, 0), Chessman.redKnight(), None)
+		self.assertTrue(rule.isMoveOfKnightLegal(move))
+
+	def testMoveRuleOfKnightFoot(self):
+		rule = ChessRule()
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((2, 2), Chessman.redKnight()),
+			ChessmanOnBoard((2, 1), Chessman.redKnight())])
+		move = Move((2, 2), (1, 0), Chessman.redKnight(), None)
+		self.assertFalse(rule.isMoveOfKnightLegal(move))
 
 	def testMoveRuleOfRook(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((0, 0), Chessman.redRook()),
+			ChessmanOnBoard((5, 0), Chessman.redKnight()),
+			ChessmanOnBoard((0, 6), Chessman.redKnight())])
+		move = Move((0, 0), (6, 0), Chessman.redRook(), None)
+		self.assertFalse(rule.isMoveOfRookLegal(move))
+		move = Move((0, 0), (0, 7), Chessman.redRook(), None)
+		self.assertFalse(rule.isMoveOfRookLegal(move))
+		move = Move((0, 0), (5, 0), Chessman.redRook(), None)
+		self.assertTrue(rule.isMoveOfRookLegal(move))
+		move = Move((0, 0), (0, 6), Chessman.redRook(), None)
+		self.assertTrue(rule.isMoveOfRookLegal(move))
+		move = Move((0, 0), (1, 6), Chessman.redRook(), None)
+		self.assertFalse(rule.isMoveOfRookLegal(move))
 
 	def testMoveRuleOfCannon(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((0, 0), Chessman.redCannon()),
+			ChessmanOnBoard((5, 0), Chessman.redKnight()),
+			ChessmanOnBoard((0, 6), Chessman.redKnight()),
+			ChessmanOnBoard((0, 7), Chessman.blackKnight())])
+		move = Move((0, 0), (6, 0), Chessman.redCannon(), None)
+		self.assertFalse(rule.isMoveOfCannonLegal(move))
+		move = Move((0, 0), (0, 7), Chessman.redCannon(), Chessman.blackKnight())
+		self.assertTrue(rule.isMoveOfCannonLegal(move))
+		move = Move((0, 0), (5, 0), Chessman.redCannon(), None)
+		self.assertFalse(rule.isMoveOfCannonLegal(move))
+		move = Move((0, 0), (0, 5), Chessman.redCannon(), None)
+		self.assertTrue(rule.isMoveOfCannonLegal(move))
+		move = Move((0, 0), (1, 6), Chessman.redCannon(), None)
+		self.assertFalse(rule.isMoveOfCannonLegal(move))
 
 	def testMoveRuleOfRedPawn(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((2, 3), Chessman.redPawn())])
+		move = Move((2, 3), (2, 4), Chessman.redPawn(), None)
+		self.assertTrue(rule.isMoveOfRedPawnLegal(move))
+		move = Move((2, 3), (1, 3), Chessman.redPawn(), None)
+		self.assertFalse(rule.isMoveOfRedPawnLegal(move))
+
+		rule.setChessmenOnBoard([ChessmanOnBoard((2, 5), Chessman.redPawn())])
+		move = Move((2, 5), (1, 5), Chessman.redPawn(), None)
+		self.assertTrue(rule.isMoveOfRedPawnLegal(move))
 
 	def testMoveRuleOfBlackPawn(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((2, 6), Chessman.blackPawn())])
+		move = Move((2, 6), (2, 5), Chessman.blackPawn(), None)
+		self.assertTrue(rule.isMoveOfBlackPawnLegal(move))
+		move = Move((2, 6), (1, 6), Chessman.blackPawn(), None)
+		self.assertFalse(rule.isMoveOfBlackPawnLegal(move))
 
-	def testKingNotMeet(self):
-		pass
+		rule.setChessmenOnBoard([ChessmanOnBoard((2, 5), Chessman.blackPawn())])
+		move = Move((2, 4), (1, 4), Chessman.blackPawn(), None)
+		self.assertTrue(rule.isMoveOfBlackPawnLegal(move))
 
 	def testSetChessmenOnBoardMultiTimes(self):
-		pass
+		rule = ChessRule()
+		rule.setChessmenOnBoard([ChessmanOnBoard((7, 6), Chessman.blackRook())])
+		rule.setChessmenOnBoard([ChessmanOnBoard((6, 5), Chessman.blackElephant())])
+		move = Move((6, 5), (8, 7), Chessman.blackElephant(), None)
+		self.assertTrue(rule.isMoveOfBlackElephantLegal(move))
 
-	def testNotChecked(self):
-		pass
+	def testNotCheckedAfterMove(self):
+		rule = ChessRule()
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((4, 0), Chessman.redKing()),
+			ChessmanOnBoard((4, 9), Chessman.blackKing()),
+			ChessmanOnBoard((4, 5), Chessman.redCannon())])
+		move = Move((4, 5), (0, 5), Chessman.redCannon(), None)
+		self.assertTrue(rule.isCheckedAfterMove(move))
+		move = Move((4, 5), (4, 7), Chessman.redCannon(), None)
+		self.assertFalse(rule.isMoveOfBlackKingLegal(move))
 
 	# 循环长捉
 	def testCircleToEat(self):
