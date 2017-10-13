@@ -91,6 +91,8 @@ class Chessman:
 
 	@staticmethod
 	def text(identifier):
+		if identifier == None:
+			identifier = Chessman.invalid()
 		allText = [
 			'空','帥','仕','相','馬','車','砲','兵',
 			'空','將','士','象','馬','車','炮','卒'

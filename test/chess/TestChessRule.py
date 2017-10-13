@@ -263,8 +263,25 @@ class TestChessRule(unittest.TestCase):
 		move = Move((4, 5), (4, 7), Chessman.redCannon(), None)
 		self.assertFalse(rule.isMoveOfBlackKingLegal(move))
 
-	# 循环长捉
-	def testCircleToEat(self):
+	# 长将：凡走子连续不停照将，而形成循环者，称为“长将”
+	def testPerpetualCheck(self):
+		pass
+
+	# 长捉：凡走子连续追捉一子或数子，而形成循环者，称为“长捉”
+	def testPerpetualChase(self):
+		pass
+
+	# 长杀：凡走子连续不停叫杀，而形成循环者，称为“长杀”
+	def testPerpetualCheckmateThreat(self):
+		pass
+
+	# 一将一杀：凡走出一步将军而下一步将要被杀棋，待被将军的一方为了解杀也同样走一将一杀的着，
+	# 前者需变着，否则被判负
+	def testCheckAndCheckmateThreat(self):
+		pass
+
+	# 一将一捉：是指凡单个子力或多个子力循环将军又循环捉子且将不死又捉不到的着法，棋规是不允许的
+	def testCheckAndChase(self):
 		pass
 
 	# 综合考虑走棋是否合法

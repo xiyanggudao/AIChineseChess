@@ -50,6 +50,12 @@ class Move:
 			return False
 		return True
 
+	def __str__(self):
+		return "<("+str(self.__fromPos[0])+", "+str(self.__fromPos[1])+", "\
+			+Chessman.text(self.moveChessman)+")~("\
+			+str(self.__toPos[0])+", "+str(self.__toPos[1])+", "\
+			+Chessman.text(self.__ateChessman)+")>"
+
 	@property
 	def fromPos(self):
 		return self.__fromPos

@@ -4,10 +4,24 @@ from chess.Chessgame import Chessgame
 from chess.ChessData import Move
 from chess.ChessRule import ChessRule
 from chess.Chessman import Chessman
+from brain.MoveProbability import MoveProbability
+from chess.MoveGenerator import MoveGenerator
 
 def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
 	window.geometry(geometry)
+
+def train():
+	moveGen = MoveGenerator(game)
+	brain = MoveProbability()
+	brain.generateProbability(moveGen.generateLegalMoves())
+	move = brain.chooseByProbability()
+	if not move:
+		return
+	game.makeMove(move.fromPos, move.toPos)
+	board.setChessmenOnBoard(game.chessmenOnBoard())
+	board.refresh()
+	cv.after(1, train)
 
 def onClick(pos):
 	if pos == None:
@@ -40,6 +54,7 @@ def onClick(pos):
 rootWindow = tkinter.Tk()
 
 cv = tkinter.Canvas(rootWindow)
+cv.after(1000, train)
 
 game = Chessgame()
 board = Chessboard(cv)
