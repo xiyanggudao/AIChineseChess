@@ -16,50 +16,120 @@ class MoveProbability:
 			probability[i] /= total
 		self.__probability = probability
 
-	def __generate(self, chessmenOnBoard, moves):
-		# 14种棋子
-		boardFeature = [None for i in range(14)]
+	def __featureIdOfChessman(self, type, color, position, active):
+		if color == active:
+			offset = 0
+		else:
+			offset = 9+5+7+90*3+55
 
-		boardFeature[0] = [0 for i in range(9)]
-		boardFeature[1] = [0 for i in range(5)]
-		boardFeature[2] = [0 for i in range(7)]
-		boardFeature[3] = [0 for i in range(90)]
-		boardFeature[4] = [0 for i in range(90)]
-		boardFeature[5] = [0 for i in range(90)]
-		boardFeature[6] = [0 for i in range(55)]
+		if color == Chessman.red:
+			x, y = position
+		else:
+			assert color == Chessman.black
+			x, y = 8 - position[0], 9 - position[1]
 
-		boardFeature[7] = [0 for i in range(9)]
-		boardFeature[8] = [0 for i in range(5)]
-		boardFeature[9] = [0 for i in range(7)]
-		boardFeature[10] = [0 for i in range(90)]
-		boardFeature[11] = [0 for i in range(90)]
-		boardFeature[12] = [0 for i in range(90)]
-		boardFeature[13] = [0 for i in range(55)]
-
-		active = Chessman.color(moves[0].moveChessman)
-		for piece in chessmenOnBoard:
-			if piece.color == active:
-				offset = 0
+		if type == Chessman.king:
+			id = y * 3 + x - 3
+		elif type == Chessman.mandarin:
+			offset += 9
+			id = (x + y - 3) // 2 + y
+		elif type == Chessman.elephant:
+			offset += 9+5
+			id = (x + y) // 4 + y
+		elif type == Chessman.knight:
+			offset += 9+5+7
+			id = y * 9 + x
+		elif type == Chessman.rook:
+			offset += 9+5+7+90
+			id = y * 9 + x
+		elif type == Chessman.cannon:
+			offset += 9+5+7+90*2
+			id = y * 9 + x
+		elif type == Chessman.pawn:
+			offset += 9+5+7+90*3
+			if y < 5:
+				id = (y - 3) * 5 + x // 2
 			else:
-				offset = 7
-			if piece.color == Chessman.red:
-				x, y = piece.position
-			elif piece.color == Chessman.black:
-				x, y = 9-piece.x, 10-piece.y
-			if piece.type == Chessman.king:
-				i = 0
-			elif piece.type == Chessman.mandarin:
-				i = 1
-			elif piece.type == Chessman.elephant:
-				i = 2
-			elif piece.type == Chessman.knight:
-				i = 3
-			elif piece.type == Chessman.rook:
-				i = 4
-			elif piece.type == Chessman.cannon:
-				i = 5
-			elif piece.type == Chessman.pawn:
-				i = 6
+				id = (y - 5) * 9 + x + 10
+		else:
+			assert False
+
+		return offset+id
+
+	def __featureIdOfMove(self, type, color, fromPos, toPos, active):
+		assert color == active
+		if color == Chessman.red:
+			fx, fy = fromPos
+			tx, ty = toPos
+		else:
+			assert color == Chessman.black
+			fx, fy = 8 - fromPos[0], 9 - fromPos[1]
+			tx, ty = 8 - toPos[0], 9 - toPos[1]
+		dx, dy = tx-fx, ty-fy
+
+		if type == Chessman.king:
+			offset = 0
+			ids = [0, 1, None, 2, 3]
+			moveId = ids[2*dx + dy + 2]
+		elif type == Chessman.mandarin:
+			offset = 9*4
+			moveId = dx + (dy+3)//2
+		elif type == Chessman.elephant:
+			offset = 9*4+5*4
+			moveId = dx//2 + (dy//2 + 3) // 2
+		elif type == Chessman.knight:
+			offset = 9*4+5*4+7*4
+			ids = [
+				0, None, 1, 2, None, None, None, 3,
+				None, None, None,
+				4, None, None, None, 5, 6, None, 7
+			]
+			moveId = ids[4*dx+dy+9]
+		elif type == Chessman.rook:
+			offset = 9*4+5*4+7*4+90*8
+			if dy == 0:
+				moveId = tx
+			else:
+				assert dx == 0
+				moveId = ty+9
+		elif type == Chessman.cannon:
+			offset = 9*4+5*4+7*4+90*8+90*18
+			if dy == 0:
+				moveId = tx
+			else:
+				assert dx == 0
+				moveId = ty+9
+		elif type == Chessman.pawn:
+			offset = 9*4+5*4+7*4+90*8+90*18*2
+			moveId = dx + 1
+		else:
+			assert False
+
+		chessId = self.__featureIdOfChessman(type, color, fromPos, active)
+		return offset+chessId*moveId
+
+	def __generate(self, chessmenOnBoard, moves):
+		active = Chessman.color(moves[0].moveChessman)
+
+		boardFeature = [0 for i in range((9+5+7+90*3+55)*2)]
+		for piece in chessmenOnBoard:
+			id = self.__featureIdOfChessman(piece.type, piece.color, piece.position, active)
+			boardFeature[id] = 1
+
+		moveFeature = [0 for i in range(9*4+5*4+7*4+90*8+90*18*2+55*3)]
+		for move in moves:
+			type = Chessman.type(move.moveChessman)
+			color = Chessman.color(move.moveChessman)
+			id = self.__featureIdOfMove(type, color, move.fromPos, move.toPos, active)
+			moveFeature[id] = 1
+
+		moveProbability = self.__brain.generate(boardFeature, moveFeature)
+		assert len(moveFeature) == len(moveProbability)
+		for move in moves:
+			type = Chessman.type(move.moveChessman)
+			color = Chessman.color(move.moveChessman)
+			id = self.__featureIdOfMove(type, color, move.fromPos, move.toPos, active)
+			self.__probability.append(moveProbability[id])
 
 	def generateProbability(self, chessmenOnBoard, moves):
 		if len(moves) < 1:
