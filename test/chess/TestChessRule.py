@@ -261,7 +261,17 @@ class TestChessRule(unittest.TestCase):
 		move = Move((4, 5), (0, 5), Chessman.redCannon(), None)
 		self.assertTrue(rule.isCheckedAfterMove(move))
 		move = Move((4, 5), (4, 7), Chessman.redCannon(), None)
-		self.assertFalse(rule.isMoveOfBlackKingLegal(move))
+		self.assertFalse(rule.isCheckedAfterMove(move))
+
+	def testKingNotMeet(self):
+		rule = ChessRule()
+		rule.setChessmenOnBoard([
+			ChessmanOnBoard((4, 0), Chessman.redKing()),
+			ChessmanOnBoard((5, 9), Chessman.blackKing())
+		])
+		move = Move((4, 0), (5, 0), Chessman.redKing(), None)
+		self.assertTrue(rule.isCheckedAfterMove(move))
+		self.assertFalse(rule.isMoveLegal(move))
 
 	# 长将：凡走子连续不停照将，而形成循环者，称为“长将”
 	def testPerpetualCheck(self):

@@ -51,10 +51,27 @@ def onClick(pos):
 			board.addToSelection(pos)
 		board.refresh()
 
+def onKey(event):
+	code = event.keycode
+	global training
+	if code == 27: # Esc
+		board.clearSelection()
+		board.refresh()
+	elif code == 37 or code == 38: # Left, Up
+		game.undoMove()
+		board.setChessmenOnBoard(game.chessmenOnBoard())
+		board.refresh()
+	elif code == 39 or code == 40: # Right, Down
+		game.redoMove()
+		board.setChessmenOnBoard(game.chessmenOnBoard())
+		board.refresh()
+	elif code == 13 and not training: # Enter
+		training = True
+		cv.after(1, train)
+
 rootWindow = tkinter.Tk()
 
 cv = tkinter.Canvas(rootWindow)
-cv.after(1000, train)
 
 game = Chessgame()
 board = Chessboard(cv)
@@ -62,12 +79,14 @@ board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
 
 board.setMoveEventListener(onClick)
+rootWindow.bind('<Key>', onKey)
 
 miniW, miniH = board.minimumSize()
 rootWindow.minsize(miniW, miniH)
 
-rootWindow.title('中国象棋---妖刀')
+rootWindow.title('中国象棋 - 妖刀')
 setWindowSize(rootWindow, miniW, miniH+5)
 
 cv.pack(fill=tkinter.BOTH, expand=1)
+training = False
 rootWindow.mainloop()

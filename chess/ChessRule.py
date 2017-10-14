@@ -19,18 +19,9 @@ class ChessRule:
 		)
 
 	def __clearChessboard(self):
-		self.__board = (
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None]
-		)
+		for y in range(len(self.__board)):
+			for x in range(len(self.__board[y])):
+				self.__board[y][x] = None
 
 	def __isPositionLegal(self, position):
 		return 0 <= position[0] <= 8 and 0 <= position[1] <= 9
@@ -213,7 +204,7 @@ class ChessRule:
 
 		kingPos = None
 		king = Chessman.identifier(Chessman.king, color)
-		for x in range(3, 5):
+		for x in range(3, 6):
 			for y in kingRangeY:
 				if self.__board[y][x] == king:
 					kingPos = (x, y)
