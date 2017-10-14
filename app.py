@@ -14,14 +14,17 @@ def setWindowSize(window, width, height):
 def train():
 	moveGen = MoveGenerator(game)
 	brain = MoveProbability()
-	brain.generateProbability(moveGen.generateLegalMoves())
+	brain.generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
 	move = brain.chooseByProbability()
+	global training
 	if not move:
+		training = False
 		return
 	game.makeMove(move.fromPos, move.toPos)
 	board.setChessmenOnBoard(game.chessmenOnBoard())
 	board.refresh()
-	cv.after(1, train)
+	if training:
+		cv.after(1, train)
 
 def onClick(pos):
 	if pos == None:
@@ -55,8 +58,13 @@ def onKey(event):
 	code = event.keycode
 	global training
 	if code == 27: # Esc
-		board.clearSelection()
-		board.refresh()
+		if board.selectionSize() > 0:
+			board.clearSelection()
+			board.refresh()
+		elif training:
+			training = False
+		else:
+			rootWindow.quit()
 	elif code == 37 or code == 38: # Left, Up
 		game.undoMove()
 		board.setChessmenOnBoard(game.chessmenOnBoard())
