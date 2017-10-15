@@ -6,6 +6,7 @@ from chess.ChessRule import ChessRule
 from chess.Chessman import Chessman
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
+from brain.Network import Network
 
 def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
@@ -13,7 +14,7 @@ def setWindowSize(window, width, height):
 
 def train():
 	moveGen = MoveGenerator(game)
-	brain = MoveProbability()
+	brain = MoveProbability(Network())
 	brain.generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
 	move = brain.chooseByProbability()
 	global training

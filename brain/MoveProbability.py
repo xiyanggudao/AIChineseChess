@@ -69,16 +69,20 @@ class MoveProbability:
 
 		if type == Chessman.king:
 			offset = 0
+			posId = fy*3 + fx-3
 			ids = [0, 1, None, 2, 3]
 			moveId = ids[2*dx + dy + 2]
 		elif type == Chessman.mandarin:
 			offset = 9*4
+			posId = [0,None,1,2,3,None,4][2*(fx-3) + fy]
 			moveId = dx + (dy+3)//2
 		elif type == Chessman.elephant:
 			offset = 9*4+5*4
+			posId = [0,1,None,2,3,4,None,5,6][fx+fy//2-1]
 			moveId = dx//2 + (dy//2 + 3) // 2
 		elif type == Chessman.knight:
 			offset = 9*4+5*4+7*4
+			posId = fy*9+fx
 			ids = [
 				0, None, 1, 2, None, None, None, 3,
 				None, None, None,
@@ -87,6 +91,7 @@ class MoveProbability:
 			moveId = ids[4*dx+dy+9]
 		elif type == Chessman.rook:
 			offset = 9*4+5*4+7*4+90*8
+			posId = fy*9 + fx
 			if dy == 0:
 				moveId = tx
 			else:
@@ -94,6 +99,7 @@ class MoveProbability:
 				moveId = ty+9
 		elif type == Chessman.cannon:
 			offset = 9*4+5*4+7*4+90*8+90*18
+			posId = fy*9 + fx
 			if dy == 0:
 				moveId = tx
 			else:
@@ -101,12 +107,15 @@ class MoveProbability:
 				moveId = ty+9
 		elif type == Chessman.pawn:
 			offset = 9*4+5*4+7*4+90*8+90*18*2
+			if fx < 5:
+				posId = (fy-3)*5+fx//2
+			else:
+				posId = (fy-5)*9+fx+10
 			moveId = dx + 1
 		else:
 			assert False
 
-		chessId = self.__featureIdOfChessman(type, color, fromPos, active)
-		return offset+chessId*moveId
+		return offset+posId*moveId
 
 	def __generate(self, chessmenOnBoard, moves):
 		active = Chessman.color(moves[0].moveChessman)
@@ -153,6 +162,7 @@ class MoveProbability:
 			if rand < self.__probability[i]:
 				return self.__moves[i]
 			rand -= self.__probability[i]
+		assert rand < 0.0000001
 		return self.__moves[0]
 
 	def chooseBest(self):
