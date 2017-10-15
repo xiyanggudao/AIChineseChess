@@ -134,11 +134,16 @@ class MoveProbability:
 
 		moveProbability = self.__brain.generate(boardFeature, moveFeature)
 		assert len(moveFeature) == len(moveProbability)
+		self.__probability = []
 		for move in moves:
 			type = Chessman.type(move.moveChessman)
 			color = Chessman.color(move.moveChessman)
 			id = self.__featureIdOfMove(type, color, move.fromPos, move.toPos, active)
 			self.__probability.append(moveProbability[id])
+		totalProbability = sum(self.__probability)
+		totalProbability2 = sum(self.__probability)
+		assert abs(totalProbability2 - totalProbability) < 0.0000001
+		print('totalProbability ', totalProbability)
 
 	def generateProbability(self, chessmenOnBoard, moves):
 		if len(moves) < 1:
@@ -162,7 +167,7 @@ class MoveProbability:
 			if rand < self.__probability[i]:
 				return self.__moves[i]
 			rand -= self.__probability[i]
-		assert rand < 0.0000001
+		print('rand choose failed ', rand)
 		return self.__moves[0]
 
 	def chooseBest(self):

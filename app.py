@@ -7,6 +7,7 @@ from chess.Chessman import Chessman
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
 from brain.Network import Network
+#import time
 
 def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
@@ -14,13 +15,20 @@ def setWindowSize(window, width, height):
 
 def train():
 	moveGen = MoveGenerator(game)
-	brain = MoveProbability(Network())
+	#start = time.time()
 	brain.generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
+	#end = time.time()
+	#print('one generate ', end - start)
 	move = brain.chooseByProbability()
 	global training
-	if not move:
+	global noEatCnt
+	if not move or noEatCnt > 100:
 		training = False
 		return
+	if move.ateChessman:
+		noEatCnt = 0
+	else:
+		noEatCnt += 1
 	game.makeMove(move.fromPos, move.toPos)
 	board.setChessmenOnBoard(game.chessmenOnBoard())
 	board.refresh()
@@ -58,6 +66,7 @@ def onClick(pos):
 def onKey(event):
 	code = event.keycode
 	global training
+	global noEatCnt
 	if code == 27: # Esc
 		if board.selectionSize() > 0:
 			board.clearSelection()
@@ -76,6 +85,7 @@ def onKey(event):
 		board.refresh()
 	elif code == 13 and not training: # Enter
 		training = True
+		noEatCnt = 0
 		cv.after(1, train)
 
 rootWindow = tkinter.Tk()
@@ -86,6 +96,7 @@ game = Chessgame()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
+brain = MoveProbability(Network())
 
 board.setMoveEventListener(onClick)
 rootWindow.bind('<Key>', onKey)

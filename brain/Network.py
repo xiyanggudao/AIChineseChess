@@ -11,10 +11,15 @@ class Network:
 		l3 = self.__addLayer(l2, 692+4209, 692+4209, tf.nn.relu)
 		l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
 		l5 = self.__addLayer(l4, 692+4209, 692+4209, tf.nn.relu)
-		z = self.__addLayer(l5, 692+4209, 4209, None)
+		l6 = self.__addLayer(l5, 692+4209, 692+4209, tf.nn.relu)
+		l7 = self.__addLayer(l6, 692+4209, 692+4209, tf.nn.relu)
+		l8 = self.__addLayer(l7, 692+4209, 692+4209, tf.nn.relu)
+		l9 = self.__addLayer(l8, 692+4209, 692+4209, tf.nn.relu)
+		z = self.__addLayer(l9, 692+4209, 4209, None)
 		self.__output = self.__pickySoftmax(z, self.__moveInput)
 
 		self.__session = tf.Session()
+		self.__z = z
 		self.__session.run(tf.global_variables_initializer())
 
 	def __pickySoftmax(self, input, pickySwitch):
@@ -25,8 +30,8 @@ class Network:
 		return output
 
 	def __addLayer(self, input, inputSize, outputSize, activationFunction):
-		w = tf.Variable(tf.random_normal([inputSize, outputSize]))
-		b = tf.Variable(tf.random_uniform([1, outputSize]))
+		w = tf.Variable(tf.random_uniform([inputSize, outputSize], 0, 0.001))
+		b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.01))
 		z = tf.matmul(input, w) + b
 		if activationFunction:
 			output = activationFunction(z)
@@ -42,6 +47,22 @@ class Network:
 			self.__output,
 			feed_dict={self.__boardInput:[boardFeature], self.__moveInput:[moveFeature]}
 		)
+
+		'''
+		z = self.__session.run(
+			self.__z,
+			feed_dict={self.__boardInput:[boardFeature], self.__moveInput:[moveFeature]}
+		)
+		for i in range(len(z[0])):
+			if i%20==0:
+				print('')
+			print(z[0][i],end=' ')
+		print('\n---------------------------------------------------------------------------------------')
+		for i in range(len(result[0])):
+			if i%20==0:
+				print('')
+			print(result[0][i],end=' ')
+		'''
 		return result[0]
 
 #n = Network()
