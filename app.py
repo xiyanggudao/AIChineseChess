@@ -13,13 +13,21 @@ def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
 	window.geometry(geometry)
 
+def reset():
+	global training
+	global noEatCnt
+	global game
+	training = False
+	noEatCnt = 0
+	game = Chessgame()
+
 def train():
 	moveGen = MoveGenerator(game)
 	#start = time.time()
-	brain.generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
+	brains[game.activeColor()].generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
 	#end = time.time()
 	#print('one generate ', end - start)
-	move = brain.chooseByProbability()
+	move = brains[game.activeColor()].chooseByProbability()
 	global training
 	global noEatCnt
 	if not move or noEatCnt > 100:
@@ -87,16 +95,23 @@ def onKey(event):
 		training = True
 		noEatCnt = 0
 		cv.after(1, train)
+	elif code == 82 and not training: # r
+		reset()
+		board.setChessmenOnBoard(game.chessmenOnBoard())
+		board.refresh()
 
 rootWindow = tkinter.Tk()
 
 cv = tkinter.Canvas(rootWindow)
 
-game = Chessgame()
+reset()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
-brain = MoveProbability(Network())
+brains = {
+	Chessman.red: MoveProbability(Network()),
+	Chessman.black: MoveProbability()
+}
 
 board.setMoveEventListener(onClick)
 rootWindow.bind('<Key>', onKey)
@@ -108,5 +123,4 @@ rootWindow.title('中国象棋 - 妖刀')
 setWindowSize(rootWindow, miniW, miniH+5)
 
 cv.pack(fill=tkinter.BOTH, expand=1)
-training = False
 rootWindow.mainloop()
