@@ -1,26 +1,35 @@
 import tensorflow as tf
+import os
 
 class Network:
 
 	def __init__(self):
-		self.__boardInput = tf.placeholder(tf.float32, [1, 692])
-		self.__moveInput = tf.placeholder(tf.float32, [1, 4209])
-		allInput = tf.concat([self.__boardInput, self.__moveInput], 1)
-		l1 = self.__addLayer(allInput, 692+4209, 692+4209, tf.nn.relu)
-		l2 = self.__addLayer(l1, 692+4209, 692+4209, tf.nn.relu)
-		l3 = self.__addLayer(l2, 692+4209, 692+4209, tf.nn.relu)
-		l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
-		l5 = self.__addLayer(l4, 692+4209, 692+4209, tf.nn.relu)
-		l6 = self.__addLayer(l5, 692+4209, 692+4209, tf.nn.relu)
-		l7 = self.__addLayer(l6, 692+4209, 692+4209, tf.nn.relu)
-		l8 = self.__addLayer(l7, 692+4209, 692+4209, tf.nn.relu)
-		l9 = self.__addLayer(l8, 692+4209, 692+4209, tf.nn.relu)
-		z = self.__addLayer(l9, 692+4209, 4209, None)
-		self.__output = self.__pickySoftmax(z, self.__moveInput)
+		self.__graph = tf.Graph()
+		with self.__graph.as_default():
+			self.__boardInput = tf.placeholder(tf.float32, [1, 692])
+			self.__moveInput = tf.placeholder(tf.float32, [1, 4209])
+			allInput = tf.concat([self.__boardInput, self.__moveInput], 1)
+			l1 = self.__addLayer(allInput, 692+4209, 692+4209, tf.nn.relu)
+			l2 = self.__addLayer(l1, 692+4209, 692+4209, tf.nn.relu)
+			l3 = self.__addLayer(l2, 692+4209, 692+4209, tf.nn.relu)
+			l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
+			l5 = self.__addLayer(l4, 692+4209, 692+4209, tf.nn.relu)
+			l6 = self.__addLayer(l5, 692+4209, 692+4209, tf.nn.relu)
+			l7 = self.__addLayer(l6, 692+4209, 692+4209, tf.nn.relu)
+			l8 = self.__addLayer(l7, 692+4209, 692+4209, tf.nn.relu)
+			l9 = self.__addLayer(l8, 692+4209, 692+4209, tf.nn.relu)
+			z = self.__addLayer(l9, 692+4209, 4209, None)
+			self.__z = z
+			self.__output = self.__pickySoftmax(z, self.__moveInput)
 
-		self.__session = tf.Session()
-		self.__z = z
-		self.__session.run(tf.global_variables_initializer())
+			self.__session = tf.Session(graph=self.__graph)
+
+			saver = tf.train.Saver()
+			if os.path.exists("./model/20171016"):
+				saver.restore(self.__session, "./model/20171016/model.ckpt")
+			else:
+				self.__session.run(tf.global_variables_initializer())
+				saver.save(self.__session, "./model/20171016/model.ckpt")
 
 	def __pickySoftmax(self, input, pickySwitch):
 		# softmax[i] = exp(input[i]) / sum(exp(input))
