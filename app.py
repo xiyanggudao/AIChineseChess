@@ -7,7 +7,7 @@ from chess.Chessman import Chessman
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
 from brain.Network import Network
-#import time
+import time
 
 def setWindowSize(window, width, height):
 	geometry = '%dx%d' % (width, height)
@@ -21,17 +21,41 @@ def reset():
 	noEatCnt = 0
 	game = Chessgame()
 
+def endGame(result):
+	print('train started', result)
+	start = time.time()
+	i = 0
+	trainGame = Chessgame()
+	while i < game.moveSize():
+		move = game.moveAt(i)
+		moveGen = MoveGenerator(trainGame)
+		moves = moveGen.generateLegalMoves()
+		moveIndex = moves.index(move)
+		brains[Chessman.red].train(trainGame.chessmenOnBoard(), moves, moveIndex, result)
+
+		trainGame.makeMove(move.fromPos, move.toPos)
+		if i+1 < game.moveSize():
+			move = game.moveAt(i+1)
+			trainGame.makeMove(move.fromPos, move.toPos)
+		i += 2
+	end = time.time()
+	print('train finished, cost time ', end-start)
+	network.save()
+
 def train():
 	moveGen = MoveGenerator(game)
-	#start = time.time()
 	brains[game.activeColor()].generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
-	#end = time.time()
-	#print('one generate ', end - start)
 	move = brains[game.activeColor()].chooseByProbability()
 	global training
 	global noEatCnt
 	if not move or noEatCnt > 100:
 		training = False
+		if not move:
+			if game.activeColor() == Chessman.red:
+				result = -1
+			else:
+				result = 1
+			endGame(result)
 		return
 	if move.ateChessman:
 		noEatCnt = 0
@@ -99,6 +123,8 @@ def onKey(event):
 		reset()
 		board.setChessmenOnBoard(game.chessmenOnBoard())
 		board.refresh()
+	elif code == 83 and not training: # s
+		network.save()
 
 rootWindow = tkinter.Tk()
 
@@ -108,8 +134,9 @@ reset()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
+network = Network()
 brains = {
-	Chessman.red: MoveProbability(Network()),
+	Chessman.red: MoveProbability(network),
 	Chessman.black: MoveProbability()
 }
 

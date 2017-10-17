@@ -4,12 +4,12 @@ import os
 class Network:
 
 	def __init__(self):
-		self.__graph = tf.Graph()
-		with self.__graph.as_default():
-			self.__boardInput = tf.placeholder(tf.float32, [1, 692])
-			self.__moveInput = tf.placeholder(tf.float32, [1, 4209])
-			allInput = tf.concat([self.__boardInput, self.__moveInput], 1)
-			l1 = self.__addLayer(allInput, 692+4209, 692+4209, tf.nn.relu)
+		g = tf.Graph()
+		with g.as_default():
+			boardInput = tf.placeholder(tf.float32, [1, 692])
+			moveInput = tf.placeholder(tf.float32, [1, 4209])
+			input = tf.concat([boardInput, moveInput], 1)
+			l1 = self.__addLayer(input, 692+4209, 692+4209, tf.nn.relu)
 			l2 = self.__addLayer(l1, 692+4209, 692+4209, tf.nn.relu)
 			l3 = self.__addLayer(l2, 692+4209, 692+4209, tf.nn.relu)
 			l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
@@ -19,17 +19,31 @@ class Network:
 			l8 = self.__addLayer(l7, 692+4209, 692+4209, tf.nn.relu)
 			l9 = self.__addLayer(l8, 692+4209, 692+4209, tf.nn.relu)
 			z = self.__addLayer(l9, 692+4209, 4209, None)
-			self.__z = z
-			self.__output = self.__pickySoftmax(z, self.__moveInput)
+			output = self.__pickySoftmax(z, moveInput)
 
-			self.__session = tf.Session(graph=self.__graph)
+			reward = tf.placeholder(tf.float32, [])
+			moveId = tf.placeholder(tf.int32, [])
+			loss = reward * tf.log(output[0][moveId])
+			train = tf.train.GradientDescentOptimizer(0.01).minimize(loss)
+
+			session = tf.Session(graph=g)
 
 			saver = tf.train.Saver()
 			if os.path.exists("./model/20171016"):
-				saver.restore(self.__session, "./model/20171016/model.ckpt")
+				saver.restore(session, "./model/20171017/model.ckpt")
 			else:
-				self.__session.run(tf.global_variables_initializer())
-				saver.save(self.__session, "./model/20171016/model.ckpt")
+				session.run(tf.global_variables_initializer())
+				saver.save(session, "./model/20171017/model.ckpt")
+
+		self.__graph = g
+		self.__boardInput = boardInput
+		self.__moveInput = moveInput
+		self.__z = z
+		self.__output = output
+		self.__session = session
+		self.__train = train
+		self.__reward = reward
+		self.__moveId = moveId
 
 	def __pickySoftmax(self, input, pickySwitch):
 		# softmax[i] = exp(input[i]) / sum(exp(input))
@@ -74,13 +88,33 @@ class Network:
 		'''
 		return result[0]
 
+	def train(self, boardFeature: list, moveFeature: list, moveId, reward):
+		self.__session.run(
+			self.__train,
+			feed_dict={
+				self.__boardInput: [boardFeature],
+				self.__moveInput: [moveFeature],
+				self.__reward: reward,
+				self.__moveId: moveId
+			}
+		)
+
+	def save(self):
+		print('save start')
+		with self.__graph.as_default():
+			saver = tf.train.Saver()
+			saver.save(self.__session, "./model/20171017/model.ckpt")
+		print('save finished')
+
 #n = Network()
 '''
 a = tf.Variable(tf.random_uniform([1, 4], 0, 0.01))
+i = tf.placeholder(tf.int32, [])
+y = a[0][i]
 init_op = tf.initialize_all_variables()
 with tf.Session() as sess:
 	sess.run(init_op)
-	print(sess.run(a[0][2]))
+	print(sess.run(y, feed_dict={i:2}))
 '''
 '''
 a = tf.placeholder(tf.float32, [1,2])

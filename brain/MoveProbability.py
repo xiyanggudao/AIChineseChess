@@ -117,7 +117,7 @@ class MoveProbability:
 
 		return offset+posId*moveId
 
-	def __generate(self, chessmenOnBoard, moves):
+	def __inputFeature(self, chessmenOnBoard, moves):
 		active = Chessman.color(moves[0].moveChessman)
 
 		boardFeature = [0 for i in range((9+5+7+90*3+55)*2)]
@@ -132,9 +132,16 @@ class MoveProbability:
 			id = self.__featureIdOfMove(type, color, move.fromPos, move.toPos, active)
 			moveFeature[id] = 1
 
+		return (boardFeature, moveFeature)
+
+	def __generate(self, chessmenOnBoard, moves):
+		boardFeature, moveFeature = self.__inputFeature(chessmenOnBoard, moves)
+
 		moveProbability = self.__brain.generate(boardFeature, moveFeature)
 		assert len(moveFeature) == len(moveProbability)
+
 		self.__probability = []
+		active = Chessman.color(moves[0].moveChessman)
 		for move in moves:
 			type = Chessman.type(move.moveChessman)
 			color = Chessman.color(move.moveChessman)
@@ -175,3 +182,14 @@ class MoveProbability:
 
 	def chooseAcceptable(self):
 		pass
+
+	def train(self, chessmenOnBoard, moves, moveIndex, result):
+		# 结果：负、和、胜
+		assert result == -1 or result == 0 or result == 1
+		if len(moves) > 1 and self.__brain and result != 0:
+			boardFeature, moveFeature = self.__inputFeature(chessmenOnBoard, moves)
+			move = moves[moveIndex]
+			type = Chessman.type(move.moveChessman)
+			color = Chessman.color(move.moveChessman)
+			moveId = self.__featureIdOfMove(type, color, move.fromPos, move.toPos, color)
+			self.__brain.train(boardFeature, moveFeature, moveId, result)

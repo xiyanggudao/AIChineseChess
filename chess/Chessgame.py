@@ -40,8 +40,8 @@ class Chessgame:
 	def moveSize(self):
 		return len(self.__moves)
 
-	def moveAt(self):
-		pass
+	def moveAt(self, index):
+		return self.__moves[index]
 
 	def makeMove(self, fromPos, toPos):
 		self.__moves.append(Move(fromPos, toPos, self.chessmanAt(fromPos), self.chessmanAt(toPos)))
