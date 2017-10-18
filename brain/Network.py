@@ -108,15 +108,6 @@ class Network:
 
 #n = Network()
 '''
-a = tf.Variable(tf.random_uniform([1, 4], 0, 0.01))
-i = tf.placeholder(tf.int32, [])
-y = a[0][i]
-init_op = tf.initialize_all_variables()
-with tf.Session() as sess:
-	sess.run(init_op)
-	print(sess.run(y, feed_dict={i:2}))
-'''
-'''
 a = tf.placeholder(tf.float32, [1,2])
 b = tf.placeholder(tf.float32, [1,3])
 
