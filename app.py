@@ -17,6 +17,7 @@ def reset():
 	global training
 	global noEatCnt
 	global game
+	global moveGen
 	global trainCnt
 	global loseCnt
 	global drawCnt
@@ -24,8 +25,9 @@ def reset():
 	training = False
 	noEatCnt = 0
 	game = Chessgame()
+	moveGen = MoveGenerator(game)
 
-	trainCnt = 100
+	trainCnt = 300
 	loseCnt = 0
 	drawCnt = 0
 	winCnt = 0
@@ -36,18 +38,19 @@ def endGame(result):
 	start = time.time()
 	i = 0
 	trainGame = Chessgame()
+	moveGenTrain = MoveGenerator(trainGame)
 	while i < game.moveSize():
 		move = game.moveAt(i)
-		moveGen = MoveGenerator(trainGame)
-		moves = moveGen.generateLegalMoves()
+		moves = moveGenTrain.generateLegalMoves()
 		moveIndex = moves.index(move)
-		brains[Chessman.red].train(trainGame.chessmenOnBoard(), moves, moveIndex, result)
+		if trainGame.activeColor() == Chessman.red:
+			trainResult = result/game.moveSize()
+		else:
+			trainResult = -result/game.moveSize()
+		brains[Chessman.red].train(trainGame.chessmenOnBoard(), moves, moveIndex, trainResult)
 
 		trainGame.makeMove(move.fromPos, move.toPos)
-		if i+1 < game.moveSize():
-			move = game.moveAt(i+1)
-			trainGame.makeMove(move.fromPos, move.toPos)
-		i += 2
+		i += 1
 	end = time.time()
 	print('train finished, cost time ', end-start)
 	network.save()
@@ -58,7 +61,7 @@ def train():
 	global drawCnt
 	global winCnt
 	global game
-	moveGen = MoveGenerator(game)
+	global moveGen
 	brains[game.activeColor()].generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
 	move = brains[game.activeColor()].chooseByProbability()
 	global training
@@ -73,13 +76,14 @@ def train():
 			else:
 				result = 1
 				winCnt += 1
-			endGame(result)
+			#endGame(result)
 		else:
 			drawCnt += 1
 
 		print('loseCnt', loseCnt, 'drawCnt', drawCnt, 'winCnt', winCnt)
 		if trainCnt > 0:
 			game = Chessgame()
+			moveGen = MoveGenerator(game)
 			board.setChessmenOnBoard(game.chessmenOnBoard())
 			board.refresh()
 
