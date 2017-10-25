@@ -329,6 +329,7 @@ class TestMoveProbability(unittest.TestCase):
 				self.assertFalse(id in idSet)
 				self.assertTrue(id in range(0, 36))
 				idSet.add(id)
+		self.assertEqual(len(idSet), 36)
 
 	def testKingMoveFeatureIdBlackActive(self):
 		idGen = MoveProbability()
@@ -342,6 +343,7 @@ class TestMoveProbability(unittest.TestCase):
 				self.assertFalse(id in idSet)
 				self.assertTrue(id in range(0, 36))
 				idSet.add(id)
+		self.assertEqual(len(idSet), 36)
 
 	def testMandarinMoveFeatureIdRedActive(self):
 		idGen = MoveProbability()
@@ -355,6 +357,7 @@ class TestMoveProbability(unittest.TestCase):
 				self.assertFalse(id in idSet)
 				self.assertTrue(id in range(36, 56))
 				idSet.add(id)
+		self.assertEqual(len(idSet), 20)
 
 	def testMandarinMoveFeatureIdBlackActive(self):
 		idGen = MoveProbability()
@@ -368,6 +371,7 @@ class TestMoveProbability(unittest.TestCase):
 				self.assertFalse(id in idSet)
 				self.assertTrue(id in range(36, 56))
 				idSet.add(id)
+		self.assertEqual(len(idSet), 20)
 
 	def testElephantMoveFeatureIdRedActive(self):
 		idGen = MoveProbability()
@@ -381,15 +385,141 @@ class TestMoveProbability(unittest.TestCase):
 				self.assertFalse(id in idSet)
 				self.assertTrue(id in range(56, 84))
 				idSet.add(id)
+		self.assertEqual(len(idSet), 28)
 
 	def testElephantMoveFeatureIdBlackActive(self):
-		pass
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.blackElephantPositions()
+		directions = [(-2, -2), (-2, 2), (2, -2), (2, 2)]
+		for pos in positions:
+			for dir in directions:
+				toPos = (pos[0]+dir[0], pos[1]+dir[1])
+				id = idGen.moveFeatureId(Chessman.elephant, Chessman.black, pos, toPos, Chessman.black)
+				self.assertFalse(id in idSet)
+				self.assertTrue(id in range(56, 84))
+				idSet.add(id)
+		self.assertEqual(len(idSet), 28)
 
-	def testMoveFeatureIdRedActive(self):
-		pass
+	def testKnightMoveFeatureIdRedActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.allPositions()
+		directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+		for pos in positions:
+			for dir in directions:
+				toPos = (pos[0]+dir[0], pos[1]+dir[1])
+				id = idGen.moveFeatureId(Chessman.knight, Chessman.red, pos, toPos, Chessman.red)
+				self.assertFalse(id in idSet)
+				self.assertTrue(id in range(84, 804))
+				idSet.add(id)
+		self.assertEqual(len(idSet), 720)
 
-	def testMoveFeatureIdBlackActive(self):
-		pass
+	def testKnightMoveFeatureIdBlackActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.allPositions()
+		directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+		for pos in positions:
+			for dir in directions:
+				toPos = (pos[0]+dir[0], pos[1]+dir[1])
+				id = idGen.moveFeatureId(Chessman.knight, Chessman.black, pos, toPos, Chessman.black)
+				self.assertFalse(id in idSet)
+				self.assertTrue(id in range(84, 804))
+				idSet.add(id)
+		self.assertEqual(len(idSet), 720)
+
+	def testRookMoveFeatureIdRedActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.allPositions()
+		directions = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+		for pos in positions:
+			for dir in directions:
+				tx, ty = (pos[0]+dir[0], pos[1]+dir[1])
+				while 0 <= tx < 9 and 0 <= ty < 10:
+					id = idGen.moveFeatureId(Chessman.rook, Chessman.red, pos, (tx, ty), Chessman.red)
+					self.assertFalse(id in idSet, 'id '+str(id)+' pos '+str(pos)+' toPos '+str((tx, ty)))
+					self.assertTrue(id in range(804, 2424))
+					idSet.add(id)
+					tx, ty = (tx+dir[0], ty+dir[1])
+		self.assertEqual(len(idSet), 1530)
+
+	def testRookMoveFeatureIdBlackActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.allPositions()
+		directions = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+		for pos in positions:
+			for dir in directions:
+				tx, ty = (pos[0]+dir[0], pos[1]+dir[1])
+				while 0 <= tx < 9 and 0 <= ty < 10:
+					id = idGen.moveFeatureId(Chessman.rook, Chessman.black, pos, (tx, ty), Chessman.black)
+					self.assertFalse(id in idSet, 'id '+str(id)+' pos '+str(pos)+' toPos '+str((tx, ty)))
+					self.assertTrue(id in range(804, 2424))
+					idSet.add(id)
+					tx, ty = (tx+dir[0], ty+dir[1])
+		self.assertEqual(len(idSet), 1530)
+
+	def testCannonMoveFeatureIdRedActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.allPositions()
+		directions = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+		for pos in positions:
+			for dir in directions:
+				tx, ty = (pos[0]+dir[0], pos[1]+dir[1])
+				while 0 <= tx < 9 and 0 <= ty < 10:
+					id = idGen.moveFeatureId(Chessman.cannon, Chessman.red, pos, (tx, ty), Chessman.red)
+					self.assertFalse(id in idSet, 'id '+str(id)+' pos '+str(pos)+' toPos '+str((tx, ty)))
+					self.assertTrue(id in range(2424, 4044))
+					idSet.add(id)
+					tx, ty = (tx+dir[0], ty+dir[1])
+		self.assertEqual(len(idSet), 1530)
+
+	def testCannonMoveFeatureIdBlackActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.allPositions()
+		directions = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+		for pos in positions:
+			for dir in directions:
+				tx, ty = (pos[0]+dir[0], pos[1]+dir[1])
+				while 0 <= tx < 9 and 0 <= ty < 10:
+					id = idGen.moveFeatureId(Chessman.cannon, Chessman.black, pos, (tx, ty), Chessman.black)
+					self.assertFalse(id in idSet, 'id '+str(id)+' pos '+str(pos)+' toPos '+str((tx, ty)))
+					self.assertTrue(id in range(2424, 4044))
+					idSet.add(id)
+					tx, ty = (tx+dir[0], ty+dir[1])
+		self.assertEqual(len(idSet), 1530)
+
+	def testPawnMoveFeatureIdRedActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.redPawnPositions()
+		directions = [(-1, 0), (0, 1), (1, 0)]
+		for pos in positions:
+			for dir in directions:
+				toPos = (pos[0]+dir[0], pos[1]+dir[1])
+				id = idGen.moveFeatureId(Chessman.pawn, Chessman.red, pos, toPos, Chessman.red)
+				self.assertFalse(id in idSet, 'id '+str(id)+' pos '+str(pos)+' toPos '+str(toPos))
+				self.assertTrue(id in range(4044, 4209))
+				idSet.add(id)
+		self.assertEqual(len(idSet), 165)
+
+	def testPawnMoveFeatureIdBlackActive(self):
+		idGen = MoveProbability()
+		idSet = set()
+		positions = self.blackPawnPositions()
+		directions = [(-1, 0), (0, -1), (1, 0)]
+		for pos in positions:
+			for dir in directions:
+				toPos = (pos[0]+dir[0], pos[1]+dir[1])
+				id = idGen.moveFeatureId(Chessman.pawn, Chessman.black, pos, toPos, Chessman.black)
+				self.assertFalse(id in idSet, 'id '+str(id)+' pos '+str(pos)+' toPos '+str(toPos))
+				self.assertTrue(id in range(4044, 4209))
+				idSet.add(id)
+		self.assertEqual(len(idSet), 165)
 
 
 if __name__ == '__main__':

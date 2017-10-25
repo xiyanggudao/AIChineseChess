@@ -15,21 +15,18 @@ class Network:
 			l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
 			l5 = self.__addLayer(l4, 692+4209, 692+4209, tf.nn.relu)
 			l6 = self.__addLayer(l5, 692+4209, 692+4209, tf.nn.relu)
-			l7 = self.__addLayer(l6, 692+4209, 692+4209, tf.nn.relu)
-			l8 = self.__addLayer(l7, 692+4209, 692+4209, tf.nn.relu)
-			l9 = self.__addLayer(l8, 692+4209, 692+4209, tf.nn.relu)
-			z = self.__addLayer(l9, 692+4209, 4209, None)
+			z = self.__addLayer(l6, 692+4209, 4209, tf.nn.relu)
 			output = self.__pickySoftmax(z, moveInput)
 
 			reward = tf.placeholder(tf.float32, [])
 			moveId = tf.placeholder(tf.int32, [])
-			loss = reward * tf.log(output[0][moveId])
-			train = tf.train.GradientDescentOptimizer(0.01).minimize(loss)
+			loss = - reward * tf.log(output[0][moveId])
+			train = tf.train.GradientDescentOptimizer(0.001).minimize(loss)
 
 			session = tf.Session(graph=g)
 
 			saver = tf.train.Saver()
-			if os.path.exists("./model/20171016"):
+			if os.path.exists("./model/20171017"):
 				saver.restore(session, "./model/20171017/model.ckpt")
 			else:
 				session.run(tf.global_variables_initializer())
@@ -53,7 +50,7 @@ class Network:
 		return output
 
 	def __addLayer(self, input, inputSize, outputSize, activationFunction):
-		w = tf.Variable(tf.random_uniform([inputSize, outputSize], 0, 0.001))
+		w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.0001, 0.001))
 		b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.01))
 		z = tf.matmul(input, w) + b
 		if activationFunction:
@@ -71,20 +68,19 @@ class Network:
 			feed_dict={self.__boardInput:[boardFeature], self.__moveInput:[moveFeature]}
 		)
 
+		totalProbability = sum(result[0])
 		'''
 		z = self.__session.run(
 			self.__z,
 			feed_dict={self.__boardInput:[boardFeature], self.__moveInput:[moveFeature]}
 		)
 		for i in range(len(z[0])):
-			if i%20==0:
-				print('')
-			print(z[0][i],end=' ')
+			if abs(result[0][i]) > 0.000000001:
+				print(z[0][i],end=' ')
 		print('\n---------------------------------------------------------------------------------------')
 		for i in range(len(result[0])):
-			if i%20==0:
-				print('')
-			print(result[0][i],end=' ')
+			if abs(result[0][i]) > 0.000000001:
+				print(result[0][i],end=' ')
 		'''
 		return result[0]
 

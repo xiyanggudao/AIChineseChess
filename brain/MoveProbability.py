@@ -106,7 +106,10 @@ class MoveProbability:
 				moveId = tx
 			else:
 				assert dx == 0
-				moveId = ty+9
+				if dy > 0:
+					moveId = ty+8
+				else:
+					moveId = ty+9
 			moveCnt = 18
 		elif type == Chessman.cannon:
 			offset = 9*4+5*4+7*4+90*8+90*18
@@ -115,11 +118,14 @@ class MoveProbability:
 				moveId = tx
 			else:
 				assert dx == 0
-				moveId = ty+9
+				if dy > 0:
+					moveId = ty+8
+				else:
+					moveId = ty+9
 			moveCnt = 18
 		elif type == Chessman.pawn:
 			offset = 9*4+5*4+7*4+90*8+90*18*2
-			if fx < 5:
+			if fy < 5:
 				posId = (fy-3)*5+fx//2
 			else:
 				posId = (fy-5)*9+fx+10

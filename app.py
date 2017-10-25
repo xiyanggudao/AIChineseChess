@@ -76,7 +76,7 @@ def train():
 			else:
 				result = 1
 				winCnt += 1
-			#endGame(result)
+			endGame(result)
 		else:
 			drawCnt += 1
 
