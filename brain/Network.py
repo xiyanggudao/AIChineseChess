@@ -1,5 +1,7 @@
 import tensorflow as tf
 import os
+import brain.NetworkFeature as nf
+from chess.Chessman import Chessman
 
 class Network:
 
@@ -59,7 +61,9 @@ class Network:
 			output = z
 		return output
 
-	def generate(self, boardFeature: list, moveFeature: list):
+	def generate(self, chessmenOnBoard, moves):
+		boardFeature, moveFeature = nf.inputFeature(chessmenOnBoard, moves)
+
 		assert len(boardFeature) == 692
 		assert len(moveFeature) == 4209
 
@@ -68,7 +72,6 @@ class Network:
 			feed_dict={self.__boardInput:[boardFeature], self.__moveInput:[moveFeature]}
 		)
 
-		totalProbability = sum(result[0])
 		'''
 		z = self.__session.run(
 			self.__z,
@@ -82,18 +85,24 @@ class Network:
 			if abs(result[0][i]) > 0.000000001:
 				print(result[0][i],end=' ')
 		'''
-		return result[0]
+		return nf.outputProbability(moves, result[0])
 
-	def train(self, boardFeature: list, moveFeature: list, moveId, reward):
-		self.__session.run(
-			self.__train,
-			feed_dict={
-				self.__boardInput: [boardFeature],
-				self.__moveInput: [moveFeature],
-				self.__reward: reward,
-				self.__moveId: moveId
-			}
-		)
+	def train(self, chessmenOnBoard, moves, moveIndex, reward):
+		if len(moves) > 1 and reward != 0:
+			boardFeature, moveFeature = nf.inputFeature(chessmenOnBoard, moves)
+			move = moves[moveIndex]
+			type = Chessman.type(move.moveChessman)
+			color = Chessman.color(move.moveChessman)
+			moveId = nf.moveFeatureId(type, color, move.fromPos, move.toPos, color)
+			self.__session.run(
+				self.__train,
+				feed_dict={
+					self.__boardInput: [boardFeature],
+					self.__moveInput: [moveFeature],
+					self.__reward: reward,
+					self.__moveId: moveId
+				}
+			)
 
 	def save(self):
 		print('save start')

@@ -7,6 +7,7 @@ from chess.Chessman import Chessman
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
 from brain.Network import Network
+import brain.RandomBrain as rb
 import time
 
 def setWindowSize(window, width, height):
@@ -34,8 +35,8 @@ def reset():
 
 def endGame(result):
 	global game
-	print('train started', result)
-	start = time.time()
+	print('train started')
+	trainStart = time.time()
 	i = 0
 	trainGame = Chessgame()
 	moveGenTrain = MoveGenerator(trainGame)
@@ -51,8 +52,8 @@ def endGame(result):
 
 		trainGame.makeMove(move.fromPos, move.toPos)
 		i += 1
-	end = time.time()
-	print('train finished, cost time ', end-start)
+	trainEnd = time.time()
+	print('train finished, cost time', round(trainEnd-trainStart, 2))
 	network.save()
 
 def train():
@@ -62,6 +63,8 @@ def train():
 	global winCnt
 	global game
 	global moveGen
+	global gameStart
+	global gameEnd
 	brains[game.activeColor()].generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
 	move = brains[game.activeColor()].chooseByProbability()
 	global training
@@ -76,11 +79,16 @@ def train():
 			else:
 				result = 1
 				winCnt += 1
-			endGame(result)
 		else:
+			result = 0
 			drawCnt += 1
 
-		print('loseCnt', loseCnt, 'drawCnt', drawCnt, 'winCnt', winCnt)
+		gameEnd = time.time()
+		print('game result', result, ', time', round(gameEnd-gameStart, 2), ', move step', game.moveSize())
+		print('total', loseCnt+drawCnt+winCnt, ', loseCnt', loseCnt, ', drawCnt', drawCnt, ', winCnt', winCnt)
+
+		if result != 0:
+			endGame(result)
 		if trainCnt > 0:
 			game = Chessgame()
 			moveGen = MoveGenerator(game)
@@ -89,6 +97,7 @@ def train():
 
 			training = True
 			noEatCnt = 0
+			gameStart = time.time()
 			cv.after(1000, train)
 		return
 	if move.ateChessman:
@@ -133,6 +142,7 @@ def onKey(event):
 	code = event.keycode
 	global training
 	global noEatCnt
+	global gameStart
 	if code == 27: # Esc
 		if board.selectionSize() > 0:
 			board.clearSelection()
@@ -152,6 +162,7 @@ def onKey(event):
 	elif code == 13 and not training: # Enter
 		training = True
 		noEatCnt = 0
+		gameStart = time.time()
 		cv.after(1, train)
 	elif code == 82 and not training: # r
 		reset()
@@ -171,7 +182,7 @@ rule = ChessRule()
 network = Network()
 brains = {
 	Chessman.red: MoveProbability(network),
-	Chessman.black: MoveProbability()
+	Chessman.black: MoveProbability(rb.RandomEatBrain())
 }
 
 board.setMoveEventListener(onClick)
