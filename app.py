@@ -28,7 +28,7 @@ def reset():
 	game = Chessgame()
 	moveGen = MoveGenerator(game)
 
-	trainCnt = 300
+	trainCnt = 800
 	loseCnt = 0
 	drawCnt = 0
 	winCnt = 0
@@ -44,17 +44,26 @@ def endGame(result):
 		move = game.moveAt(i)
 		moves = moveGenTrain.generateLegalMoves()
 		moveIndex = moves.index(move)
-		if trainGame.activeColor() == Chessman.red:
-			trainResult = result/game.moveSize()
+		if trainGame.activeColor() == trainColor:
+			trainResult = result
 		else:
-			trainResult = -result/game.moveSize()
-		brains[Chessman.red].train(trainGame.chessmenOnBoard(), moves, moveIndex, trainResult)
+			trainResult = -result
+		brains[trainColor].addTrainData(trainGame.chessmenOnBoard(), moves, moveIndex, trainResult)
 
 		trainGame.makeMove(move.fromPos, move.toPos)
 		i += 1
+	brains[trainColor].train()
 	trainEnd = time.time()
 	print('train finished, cost time', round(trainEnd-trainStart, 2))
 	network.save()
+
+def swapTrainColor():
+	global trainColor
+	nextColor = Chessman.oppositeColor(trainColor)
+	brainTmp = brains[nextColor]
+	brains[nextColor] = brains[trainColor]
+	brains[trainColor] = brainTmp
+	trainColor = nextColor
 
 def train():
 	global trainCnt
@@ -73,7 +82,7 @@ def train():
 		training = False
 		trainCnt -= 1
 		if not move:
-			if game.activeColor() == Chessman.red:
+			if game.activeColor() == trainColor:
 				result = -1
 				loseCnt += 1
 			else:
@@ -92,11 +101,14 @@ def train():
 		if trainCnt > 0:
 			game = Chessgame()
 			moveGen = MoveGenerator(game)
-			board.setChessmenOnBoard(game.chessmenOnBoard())
-			board.refresh()
+			#board.setChessmenOnBoard(game.chessmenOnBoard())
+			#board.refresh()
 
 			training = True
 			noEatCnt = 0
+
+			swapTrainColor()
+
 			gameStart = time.time()
 			cv.after(1000, train)
 		return
@@ -105,8 +117,8 @@ def train():
 	else:
 		noEatCnt += 1
 	game.makeMove(move.fromPos, move.toPos)
-	board.setChessmenOnBoard(game.chessmenOnBoard())
-	board.refresh()
+	#board.setChessmenOnBoard(game.chessmenOnBoard())
+	#board.refresh()
 	if training:
 		cv.after(1, train)
 
@@ -184,6 +196,7 @@ brains = {
 	Chessman.red: MoveProbability(network),
 	Chessman.black: MoveProbability(rb.RandomEatBrain())
 }
+trainColor = Chessman.red
 
 board.setMoveEventListener(onClick)
 rootWindow.bind('<Key>', onKey)

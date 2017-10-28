@@ -16,9 +16,6 @@ class RandomBrain:
 
 		return probability
 
-	def train(self, chessmenOnBoard, moves, moveIndex, reward):
-		pass
-
 
 class RandomEatBrain:
 
@@ -41,6 +38,3 @@ class RandomEatBrain:
 			probability[i] /= total
 
 		return probability
-
-	def train(self, chessmenOnBoard, moves, moveIndex, reward):
-		pass

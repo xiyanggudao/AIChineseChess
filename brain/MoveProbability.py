@@ -43,8 +43,12 @@ class MoveProbability:
 	def chooseAcceptable(self):
 		pass
 
-	def train(self, chessmenOnBoard, moves, moveIndex, result):
+	def addTrainData(self, chessmenOnBoard, moves, moveIndex, result):
 		# 结果：负、和、胜
 		#assert result == -1 or result == 0 or result == 1
 		if len(moves) > 1 and self.__brain and result != 0:
-			self.__brain.train(chessmenOnBoard, moves, moveIndex, result)
+			self.__brain.addTrainData(chessmenOnBoard, moves, moveIndex, result)
+
+	def train(self):
+		if self.__brain:
+			self.__brain.train()

@@ -8,8 +8,8 @@ class Network:
 	def __init__(self):
 		g = tf.Graph()
 		with g.as_default():
-			boardInput = tf.placeholder(tf.float32, [1, 692])
-			moveInput = tf.placeholder(tf.float32, [1, 4209])
+			boardInput = tf.placeholder(tf.float32, [None, 692])
+			moveInput = tf.placeholder(tf.float32, [None, 4209])
 			input = tf.concat([boardInput, moveInput], 1)
 			l1 = self.__addLayer(input, 692+4209, 692+4209, tf.nn.relu)
 			l2 = self.__addLayer(l1, 692+4209, 692+4209, tf.nn.relu)
@@ -17,12 +17,12 @@ class Network:
 			l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
 			l5 = self.__addLayer(l4, 692+4209, 692+4209, tf.nn.relu)
 			l6 = self.__addLayer(l5, 692+4209, 692+4209, tf.nn.relu)
-			z = self.__addLayer(l6, 692+4209, 4209, tf.nn.relu)
+			z = self.__addLayer(l6, 692+4209, 4209, None)
 			output = self.__pickySoftmax(z, moveInput)
 
-			reward = tf.placeholder(tf.float32, [])
-			moveId = tf.placeholder(tf.int32, [])
-			loss = - reward * tf.log(output[0][moveId])
+			reward = tf.placeholder(tf.float32, [None], 'reward')
+			moveId = tf.placeholder(tf.float32, [None, 4209], 'moveId')
+			loss = - tf.reduce_mean(reward * tf.log(tf.reduce_sum(output*moveId, 1)))
 			train = tf.train.GradientDescentOptimizer(0.001).minimize(loss)
 
 			session = tf.Session(graph=g)
@@ -44,11 +44,16 @@ class Network:
 		self.__reward = reward
 		self.__moveId = moveId
 
+		self.__trainBoardFeatures = []
+		self.__trainMoveFeatures = []
+		self.__trainRewards = []
+		self.__trainMoveSelectors = []
+
 	def __pickySoftmax(self, input, pickySwitch):
 		# softmax[i] = exp(input[i]) / sum(exp(input))
 		# pickySoftmax[i] = pickySwitch[i]*exp(input[i]) / sum(pickySwitch*exp(input))
-		expVal = input * pickySwitch
-		output = expVal / tf.reduce_sum(expVal)
+		expVal = tf.exp(input) * pickySwitch
+		output = expVal / tf.reduce_sum(expVal, 1, keep_dims=True)
 		return output
 
 	def __addLayer(self, input, inputSize, outputSize, activationFunction):
@@ -78,31 +83,47 @@ class Network:
 			feed_dict={self.__boardInput:[boardFeature], self.__moveInput:[moveFeature]}
 		)
 		for i in range(len(z[0])):
-			if abs(result[0][i]) > 0.000000001:
+			if moveFeature[i] == 1:
 				print(z[0][i],end=' ')
 		print('\n---------------------------------------------------------------------------------------')
 		for i in range(len(result[0])):
-			if abs(result[0][i]) > 0.000000001:
+			if moveFeature[i] == 1:
 				print(result[0][i],end=' ')
+		print('\n---------------------------------------------------------------------------------------')
 		'''
 		return nf.outputProbability(moves, result[0])
 
-	def train(self, chessmenOnBoard, moves, moveIndex, reward):
+	def addTrainData(self, chessmenOnBoard, moves, moveIndex, reward):
 		if len(moves) > 1 and reward != 0:
 			boardFeature, moveFeature = nf.inputFeature(chessmenOnBoard, moves)
 			move = moves[moveIndex]
 			type = Chessman.type(move.moveChessman)
 			color = Chessman.color(move.moveChessman)
 			moveId = nf.moveFeatureId(type, color, move.fromPos, move.toPos, color)
+			moveSelector = [0 for i in range(4209)]
+			moveSelector[moveId] = 1
+
+			self.__trainBoardFeatures.append(boardFeature)
+			self.__trainMoveFeatures.append(moveFeature)
+			self.__trainRewards.append(reward)
+			self.__trainMoveSelectors.append(moveSelector)
+
+	def train(self):
+		if len(self.__trainBoardFeatures) > 1:
 			self.__session.run(
 				self.__train,
 				feed_dict={
-					self.__boardInput: [boardFeature],
-					self.__moveInput: [moveFeature],
-					self.__reward: reward,
-					self.__moveId: moveId
+					self.__boardInput: self.__trainBoardFeatures,
+					self.__moveInput: self.__trainMoveFeatures,
+					self.__reward: self.__trainRewards,
+					self.__moveId: self.__trainMoveSelectors
 				}
 			)
+
+			self.__trainBoardFeatures.clear()
+			self.__trainMoveFeatures.clear()
+			self.__trainRewards.clear()
+			self.__trainMoveSelectors.clear()
 
 	def save(self):
 		print('save start')
@@ -110,17 +131,3 @@ class Network:
 			saver = tf.train.Saver()
 			saver.save(self.__session, "./model/20171017/model.ckpt")
 		print('save finished')
-
-#n = Network()
-'''
-a = tf.placeholder(tf.float32, [1,2])
-b = tf.placeholder(tf.float32, [1,3])
-
-c = tf.concat([a,b], 1)
-
-init_op = tf.initialize_all_variables()
-
-with tf.Session() as sess:
-	sess.run(init_op)
-	print(sess.run(c, feed_dict={a:[[1.,2.]],b:[[4.,5.,6.]]}))
-'''
