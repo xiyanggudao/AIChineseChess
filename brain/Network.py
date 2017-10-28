@@ -66,8 +66,8 @@ class Network:
 			output = z
 		return output
 
-	def generate(self, chessmenOnBoard, moves):
-		boardFeature, moveFeature = nf.inputFeature(chessmenOnBoard, moves)
+	def generate(self, game, moves):
+		boardFeature, moveFeature = nf.inputFeature(game.chessmenOnBoard(), moves)
 
 		assert len(boardFeature) == 692
 		assert len(moveFeature) == 4209

@@ -7,7 +7,7 @@ from chess.Chessman import Chessman
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
 from brain.Network import Network
-import brain.RandomBrain as rb
+from brain.UcciBrain import UcciBrain
 import time
 
 def setWindowSize(window, width, height):
@@ -28,7 +28,7 @@ def reset():
 	game = Chessgame()
 	moveGen = MoveGenerator(game)
 
-	trainCnt = 800
+	trainCnt = 900
 	loseCnt = 0
 	drawCnt = 0
 	winCnt = 0
@@ -74,7 +74,7 @@ def train():
 	global moveGen
 	global gameStart
 	global gameEnd
-	brains[game.activeColor()].generateProbability(game.chessmenOnBoard(), moveGen.generateLegalMoves())
+	brains[game.activeColor()].generateProbability(game, moveGen.generateLegalMoves())
 	move = brains[game.activeColor()].chooseByProbability()
 	global training
 	global noEatCnt
@@ -162,7 +162,7 @@ def onKey(event):
 		elif training:
 			training = False
 		else:
-			rootWindow.quit()
+			rootWindow.destroy()
 	elif code == 37 or code == 38: # Left, Up
 		game.undoMove()
 		board.setChessmenOnBoard(game.chessmenOnBoard())
@@ -192,9 +192,10 @@ board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
 network = Network()
+ucci = UcciBrain()
 brains = {
 	Chessman.red: MoveProbability(network),
-	Chessman.black: MoveProbability(rb.RandomEatBrain())
+	Chessman.black: MoveProbability(ucci)
 }
 trainColor = Chessman.red
 

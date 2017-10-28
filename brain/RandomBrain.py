@@ -5,7 +5,7 @@ class RandomBrain:
 	def __init__(self):
 		pass
 
-	def generate(self, chessmenOnBoard, moves):
+	def generate(self, game, moves):
 		probability = []
 		total = 0
 		for i in range(len(moves)):
@@ -22,7 +22,7 @@ class RandomEatBrain:
 	def __init__(self):
 		pass
 
-	def generate(self, chessmenOnBoard, moves):
+	def generate(self, game, moves):
 		probability = []
 		total = 0
 		for i in range(len(moves)):
