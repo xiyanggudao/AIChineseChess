@@ -26,6 +26,9 @@ class MoveProbability:
 	def probability(self):
 		return self.__probability
 
+	def moves(self):
+		return self.__moves
+
 	def chooseByProbability(self):
 		if len(self.__moves) == 0:
 			return None

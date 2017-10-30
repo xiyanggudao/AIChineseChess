@@ -29,14 +29,9 @@ class UcciBrain:
 
 	def positionCommand(self, game):
 		commandStr = 'position startpos moves'
-		xs = 'abcdefghi'
-		ys = '0123456789'
 		for i in range(game.moveSize()):
 			move = game.moveAt(i)
-			fx, fy = move.fromPos
-			tx, ty = move.toPos
-			moveStr = ' '+xs[fx]+ys[fy]+xs[tx]+ys[ty]
-			commandStr = commandStr + moveStr
+			commandStr = commandStr + ' '+move.ucciStr()
 		return commandStr + '\n'
 
 	def generate(self, game, moves):

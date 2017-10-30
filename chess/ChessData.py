@@ -56,6 +56,13 @@ class Move:
 			+str(self.__toPos[0])+", "+str(self.__toPos[1])+", "\
 			+Chessman.text(self.__ateChessman)+")>"
 
+	def ucciStr(self):
+		xs = 'abcdefghi'
+		ys = '0123456789'
+		fx, fy = self.__fromPos
+		tx, ty = self.__toPos
+		return xs[fx] + ys[fy] + xs[tx] + ys[ty]
+
 	@property
 	def fromPos(self):
 		return self.__fromPos

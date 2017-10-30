@@ -28,13 +28,25 @@ def reset():
 	game = Chessgame()
 	moveGen = MoveGenerator(game)
 
-	trainCnt = 900
+	trainCnt = 9000
 	loseCnt = 0
 	drawCnt = 0
 	winCnt = 0
 
+def networkSavePath():
+	global loseCnt
+	global drawCnt
+	global winCnt
+	basePath = './model/'
+	date = '20171029-'
+	startTurn = 300
+	suffix = '%05d'%(startTurn+loseCnt+drawCnt+winCnt)
+	name = '/model.ckpt'
+	return basePath+date+suffix+name
+
 def endGame(result):
 	global game
+	global trainCnt
 	print('train started')
 	trainStart = time.time()
 	i = 0
@@ -55,7 +67,8 @@ def endGame(result):
 	brains[trainColor].train()
 	trainEnd = time.time()
 	print('train finished, cost time', round(trainEnd-trainStart, 2))
-	network.save()
+	if trainCnt%300 == 0:
+		network.save(networkSavePath())
 
 def swapTrainColor():
 	global trainColor
@@ -98,6 +111,7 @@ def train():
 
 		if result != 0:
 			endGame(result)
+
 		if trainCnt > 0:
 			game = Chessgame()
 			moveGen = MoveGenerator(game)
@@ -180,8 +194,6 @@ def onKey(event):
 		reset()
 		board.setChessmenOnBoard(game.chessmenOnBoard())
 		board.refresh()
-	elif code == 83 and not training: # s
-		network.save()
 
 rootWindow = tkinter.Tk()
 
@@ -191,7 +203,7 @@ reset()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
-network = Network()
+network = Network(networkSavePath())
 ucci = UcciBrain()
 brains = {
 	Chessman.red: MoveProbability(network),

@@ -1,11 +1,12 @@
 import tensorflow as tf
 import os
+import time
 import brain.NetworkFeature as nf
 from chess.Chessman import Chessman
 
 class Network:
 
-	def __init__(self):
+	def __init__(self, initPath):
 		g = tf.Graph()
 		with g.as_default():
 			boardInput = tf.placeholder(tf.float32, [None, 692])
@@ -28,11 +29,13 @@ class Network:
 			session = tf.Session(graph=g)
 
 			saver = tf.train.Saver()
-			if os.path.exists("./model/20171017"):
-				saver.restore(session, "./model/20171017/model.ckpt")
+			name = '/model.ckpt'
+			assert initPath.endswith(name)
+			if os.path.exists(initPath[0:len(initPath) - len(name)]):
+				saver.restore(session, initPath)
 			else:
 				session.run(tf.global_variables_initializer())
-				saver.save(session, "./model/20171017/model.ckpt")
+				saver.save(session, initPath)
 
 		self.__graph = g
 		self.__boardInput = boardInput
@@ -125,9 +128,11 @@ class Network:
 			self.__trainRewards.clear()
 			self.__trainMoveSelectors.clear()
 
-	def save(self):
+	def save(self, path):
 		print('save start')
+		saveStart = time.time()
 		with self.__graph.as_default():
 			saver = tf.train.Saver()
-			saver.save(self.__session, "./model/20171017/model.ckpt")
-		print('save finished')
+			saver.save(self.__session, path)
+		saveEnd = time.time()
+		print('save finished, cost time', round(saveEnd-saveStart, 2))
