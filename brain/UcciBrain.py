@@ -36,7 +36,7 @@ class UcciBrain:
 
 	def generate(self, game, moves):
 		self.sendCommand(self.positionCommand(game))
-		self.sendCommand('go depth 9\n')
+		self.sendCommand('go depth 7\n')
 		bestMoveKey = 'bestmove '
 		bestMoveLine = self.getResult(bestMoveKey)
 		assert bestMoveLine.startswith(bestMoveKey)
