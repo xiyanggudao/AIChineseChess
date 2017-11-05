@@ -1,10 +1,8 @@
 from chess.Chessgame import Chessgame
-from chess.ChessData import Move
-from chess.ChessRule import ChessRule
-from chess.Chessman import Chessman
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
 from brain.Network import Network
+from brain.ResidualNetwork2 import ResidualNetwork
 from brain.UcciBrain import UcciBrain
 import time
 
@@ -70,7 +68,7 @@ class Trainer:
 		print('total', total, ', loseCnt', self.loseCnt, ', drawCnt', self.drawCnt, ', winCnt', self.winCnt)
 
 	def train(self):
-		network = Network(self.networkSavePath(self.startTrainCnt))
+		network = ResidualNetwork(self.networkSavePath(self.startTrainCnt))
 		ucci = UcciBrain()
 		brains = [MoveProbability(network), MoveProbability(ucci)]
 		for i in range(self.startTrainCnt, self.endTrainCnt):
@@ -99,6 +97,8 @@ class Trainer:
 
 			if (i+1)%self.saveTurn == 0:
 				network.save(self.networkSavePath(i+1))
+				# 定期重启ucci进程，不然会挂
+				brains[1] = MoveProbability(UcciBrain())
 
-trainer = Trainer(9000, 18000, 1000)
+trainer = Trainer(0, 30000, 1000)
 trainer.train()

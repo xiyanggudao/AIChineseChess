@@ -4,7 +4,7 @@ import time
 import brain.NetworkFeature as nf
 from chess.Chessman import Chessman
 
-class Network:
+class ResidualNetwork:
 
 	def __init__(self, initPath):
 		g = tf.Graph()
@@ -12,13 +12,24 @@ class Network:
 			boardInput = tf.placeholder(tf.float32, [None, 692])
 			moveInput = tf.placeholder(tf.float32, [None, 4209])
 			input = tf.concat([boardInput, moveInput], 1)
-			l1 = self.__addLayer(input, 692+4209, 692+4209, tf.nn.relu)
-			l2 = self.__addLayer(l1, 692+4209, 692+4209, tf.nn.relu)
-			l3 = self.__addLayer(l2, 692+4209, 692+4209, tf.nn.relu)
-			l4 = self.__addLayer(l3, 692+4209, 692+4209, tf.nn.relu)
-			l5 = self.__addLayer(l4, 692+4209, 692+4209, tf.nn.relu)
-			l6 = self.__addLayer(l5, 692+4209, 692+4209, tf.nn.relu)
-			z = self.__addLayer(l6, 692+4209, 4209, None)
+			l0 = self.__addLayer(input, 692 + 4209, 1024)
+			l0 = tf.nn.relu(l0)
+			l1 = self.__addResnetBlock(l0, 1024)
+			l2 = self.__addResnetBlock(l1, 1024)
+			l3 = self.__addResnetBlock(l2, 1024)
+			l4 = self.__addResnetBlock(l3, 1024)
+			l5 = self.__addResnetBlock(l4, 1024)
+			l6 = self.__addResnetBlock(l5, 1024)
+			l7 = self.__addResnetBlock(l6, 1024)
+			l8 = self.__addResnetBlock(l7, 1024)
+			l9 = self.__addResnetBlock(l8, 1024)
+			la = self.__addResnetBlock(l9, 1024)
+			lb = self.__addResnetBlock(la, 1024)
+			lc = self.__addResnetBlock(lb, 1024)
+			ld = self.__addResnetBlock(lc, 1024)
+			le = self.__addResnetBlock(ld, 1024)
+			lf = self.__addResnetBlock(le, 1024)
+			z = self.__addLayer(lf, 1024, 4209)
 			output = self.__pickySoftmax(z, moveInput)
 
 			reward = tf.placeholder(tf.float32, [None], 'reward')
@@ -59,15 +70,22 @@ class Network:
 		output = expVal / tf.reduce_sum(expVal, 1, keep_dims=True)
 		return output
 
-	def __addLayer(self, input, inputSize, outputSize, activationFunction):
+	def __addResnetBlock(self, input, inputSize):
+		w1 = tf.Variable(tf.random_uniform([inputSize, inputSize], -0.001, 0.0016))
+		b1 = tf.Variable(tf.random_uniform([1, inputSize], 0, 0.01))
+		z1 = tf.matmul(input, w1) + b1
+		o1 = tf.nn.relu(z1)
+		w2 = tf.Variable(tf.random_uniform([inputSize, inputSize], -0.001, 0.0016))
+		b2 = tf.Variable(tf.random_uniform([1, inputSize], 0, 0.01))
+		z2 = tf.matmul(o1, w2) + b2 + input
+		output = tf.nn.relu(z2)
+		return output
+
+	def __addLayer(self, input, inputSize, outputSize):
 		w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.0001, 0.001))
 		b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.01))
 		z = tf.matmul(input, w) + b
-		if activationFunction:
-			output = activationFunction(z)
-		else:
-			output = z
-		return output
+		return z
 
 	def generate(self, game, moves):
 		boardFeature, moveFeature = nf.inputFeature(game.chessmenOnBoard(), moves)
