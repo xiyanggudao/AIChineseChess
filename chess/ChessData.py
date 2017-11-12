@@ -30,6 +30,13 @@ class ChessmanOnBoard:
 	def color(self):
 		return Chessman.color(self.__identifier)
 
+	def __eq__(self, other):
+		if self.__identifier != other.__identifier:
+			return False
+		if self.__position != other.__position:
+			return False
+		return True
+
 # 走棋数据，提供外面访问走棋历史的接口
 class Move:
 

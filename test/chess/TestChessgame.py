@@ -81,6 +81,26 @@ class TestChessgame(unittest.TestCase):
 		self.assertEqual(game.chessmanAt((1, 9)), Chessman.redCannon())
 		self.assertEqual(len(game.chessmenOnBoard()), 31)
 
+	def testGetUcciFen(self):
+		game = Chessgame()
+		ucciFen = game.ucciFen()
+		self.assertEqual(ucciFen, 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1')
+
+	def testSetWithUcciFen(self):
+		game = Chessgame()
+		game.makeMove((1, 0), (2, 2))
+
+		gameUcci = Chessgame()
+		ucciFen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1CN4C1/9/R1BAKABNR b - - 0 1'
+		gameUcci.setWithUcciFen(ucciFen)
+
+		self.assertEqual(game.activeColor(), gameUcci.activeColor())
+		chessmen = game.chessmenOnBoard()
+		chessmenUcci = gameUcci.chessmenOnBoard()
+		self.assertEqual(len(chessmen), len(chessmenUcci))
+		for i in range(len(chessmen)):
+			self.assertEqual(chessmen[i], chessmenUcci[i])
+
 
 if __name__ == '__main__':
 	unittest.main()

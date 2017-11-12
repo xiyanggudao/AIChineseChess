@@ -86,3 +86,53 @@ class Chessgame:
 	def lastMove(self):
 		if len(self.__moves) > 0:
 			return self.__moves[len(self.__moves) - 1]
+
+	def ucciFen(self):
+		ret = ''
+		for y in range(9, -1, -1):
+			blank = 0
+			for x in range(9):
+				piece = self.__board[y][x]
+				if piece == None:
+					blank += 1
+				else:
+					if blank != 0:
+						ret += str(blank)
+						blank = 0
+					ret += Chessman.ucciFenOfChessman(piece)
+			if blank != 0:
+				ret += str(blank)
+			if y != 0:
+				ret += '/'
+		ret += ' '
+		ret += Chessman.ucciFenOfColor(self.activeColor())
+		ret += ' - - 0 1'
+		return ret
+
+	def setWithUcciFen(self, ucciFen):
+		self.__board = (
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None],
+			[None, None, None, None, None, None, None, None, None]
+		)
+		index = 0
+		y = 9
+		while y >= 0:
+			x = 0
+			while x < 9:
+				if '0' <= ucciFen[index] <= '9':
+					x += ord(ucciFen[index]) - ord('0')
+				else:
+					self.__board[y][x] = Chessman.chessmanOfUcciFen(ucciFen[index])
+					x += 1
+				index += 1
+			index += 1
+			y -= 1
+		self.__activeColor = Chessman.colorOfUcciFen(ucciFen[index])

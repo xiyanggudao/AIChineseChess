@@ -98,3 +98,50 @@ class Chessman:
 			'空','將','士','象','馬','車','炮','卒'
 		]
 		return allText[identifier]
+
+	@staticmethod
+	def ucciFenOfChessman(identifier):
+		if identifier == None:
+			identifier = Chessman.invalid()
+		allStr = [
+			'','K','A','B','N','R','C','P',
+			'','k','a','b','n','r','c','p'
+		]
+		return allStr[identifier]
+
+	@staticmethod
+	def ucciFenOfColor(color):
+		if color == Chessman.red:
+			return 'w'
+		elif color == Chessman.black:
+			return 'b'
+		else:
+			return ''
+
+	@staticmethod
+	def chessmanOfUcciFen(fen):
+		transMap = {
+			'K': Chessman.redKing(),
+			'A': Chessman.redMandarin(),
+			'B': Chessman.redElephant(),
+			'N': Chessman.redKnight(),
+			'R': Chessman.redRook(),
+			'C': Chessman.redCannon(),
+			'P': Chessman.redPawn(),
+			'k': Chessman.blackKing(),
+			'a': Chessman.blackMandarin(),
+			'b': Chessman.blackElephant(),
+			'n': Chessman.blackKnight(),
+			'r': Chessman.blackRook(),
+			'c': Chessman.blackCannon(),
+			'p': Chessman.blackPawn()
+		}
+		return transMap[fen]
+
+	@staticmethod
+	def colorOfUcciFen(fen):
+		transMap = {
+			'w': Chessman.red,
+			'b': Chessman.black
+		}
+		return transMap[fen]

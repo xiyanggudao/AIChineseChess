@@ -5,7 +5,7 @@ class UcciBrain:
 
 	def __init__(self):
 		self.__process = subprocess.Popen(
-			['./xqwizard/ELEEYE.EXE'],
+			['./ucci/xqwizard/ELEEYE.EXE'],
 			stdin=subprocess.PIPE,
 			stdout=subprocess.PIPE
 		)
@@ -22,14 +22,16 @@ class UcciBrain:
 	def getResult(self, keyword):
 		while True:
 			out = self.__process.stdout.readline()
-			outStr = out.decode()
+			outStr = out.decode(encoding='utf-8', errors='ignore')
 			#print(outStr, end='')
 			if outStr.find(keyword) != -1:
 				return outStr
 
 	def positionCommand(self, game):
-		commandStr = 'position startpos moves'
+		commandStr = 'position startpos'
 		for i in range(game.moveSize()):
+			if i == 0:
+				commandStr += ' moves'
 			move = game.moveAt(i)
 			commandStr = commandStr + ' '+move.ucciStr()
 		return commandStr + '\n'
