@@ -3,9 +3,10 @@ from chess.ChessData import Move
 
 class UcciBrain:
 
-	def __init__(self):
+	def __init__(self, path):
+		self.setDepth(7)
 		self.__process = subprocess.Popen(
-			['./ucci/xqwizard/ELEEYE.EXE'],
+			[path],
 			stdin=subprocess.PIPE,
 			stdout=subprocess.PIPE
 		)
@@ -14,6 +15,9 @@ class UcciBrain:
 
 	def __del__(self):
 		self.sendCommand('quit\n')
+
+	def setDepth(self, depth):
+		self.__levelCommand = 'go depth '+str(depth)+'\n'
 
 	def sendCommand(self, commandStr):
 		self.__process.stdin.write(commandStr.encode())
@@ -38,7 +42,7 @@ class UcciBrain:
 
 	def generate(self, game, moves):
 		self.sendCommand(self.positionCommand(game))
-		self.sendCommand('go depth 7\n')
+		self.sendCommand(self.__levelCommand)
 		bestMoveKey = 'bestmove '
 		bestMoveLine = self.getResult(bestMoveKey)
 		assert bestMoveLine.startswith(bestMoveKey)

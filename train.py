@@ -69,7 +69,7 @@ class Trainer:
 
 	def train(self):
 		network = ResidualNetwork(self.networkSavePath(self.startTrainCnt))
-		ucci = UcciBrain()
+		ucci = UcciBrain('./ucci/xqwizard/ELEEYE.EXE')
 		brains = [MoveProbability(network), MoveProbability(ucci)]
 		for i in range(self.startTrainCnt, self.endTrainCnt):
 			startMan = i & 1
@@ -98,7 +98,7 @@ class Trainer:
 			if (i+1)%self.saveTurn == 0:
 				network.save(self.networkSavePath(i+1))
 				# 定期重启ucci进程，不然会挂
-				brains[1] = MoveProbability(UcciBrain())
+				brains[1] = MoveProbability(UcciBrain('./ucci/xqwizard/ELEEYE.EXE'))
 
 trainer = Trainer(0, 30000, 1000)
 trainer.train()
