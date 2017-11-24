@@ -4,6 +4,7 @@ from chess.MoveGenerator import MoveGenerator
 from brain.UcciBrain import UcciBrain
 import random
 import time
+import traceback
 
 brains = [
 	'./ucci/bhws/Binghewusi.exe',
@@ -12,7 +13,6 @@ brains = [
 	'./ucci/hice/HICE.EXE',
 	'./ucci/jupiter/JUPITER.EXE',
 	'./ucci/king/King.exe',
-	'./ucci/mars/MARS.EXE',
 	'./ucci/nymphchess/EYE.EXE',
 	'./ucci/qstar/qst.exe',
 	'./ucci/sixteeners/sixteen.exe',
@@ -32,7 +32,6 @@ names = [
 	'hice',
 	'jupiter',
 	'king',
-	'mars',
 	'nymphchess',
 	'qstar',
 	'sixteeners',
@@ -104,19 +103,27 @@ for i in range(10000):
 	redDepth = random.randint(5, 11)
 	blackDepth = random.randint(5, 11)
 
-	brainStart = time.time()
-	red = UcciBrain(brains[redIndex])
-	black = UcciBrain(brains[blackIndex])
-	brainEnd = time.time()
-	red.setDepth(redDepth)
-	black.setDepth(blackDepth)
-	print(names[redIndex], redDepth, 'vs', names[blackIndex], blackDepth)
-	playStart = time.time()
-	game = play(red, black)
-	playEnd = time.time()
-	if not hasattr(game, 'isDraw') and game.moveSize() > 0:
-		print(
-			'save', i, 'brain time', round(brainEnd - brainStart, 2),
-			'play time', round(playEnd - playStart, 2)
-		)
-		save(game)
+	try:
+		brainStart = time.time()
+		red = UcciBrain(brains[redIndex])
+		black = UcciBrain(brains[blackIndex])
+		brainEnd = time.time()
+		red.setDepth(redDepth)
+		black.setDepth(blackDepth)
+		print(names[redIndex], redDepth, 'vs', names[blackIndex], blackDepth)
+		playStart = time.time()
+		game = play(red, black)
+		playEnd = time.time()
+		if not hasattr(game, 'isDraw') and game.moveSize() > 0:
+			print(
+				'save', i, 'brain time', round(brainEnd - brainStart, 2),
+				'play time', round(playEnd - playStart, 2)
+			)
+			save(game)
+	except:
+		f = open("log.txt", 'a')
+		traceback.print_exc(file=f)
+		f.close()
+	finally:
+		del red
+		del black

@@ -29,6 +29,7 @@ class UcciBrain:
 			outStr = out.decode(encoding='utf-8', errors='ignore')
 			#print(outStr, end='')
 			if outStr.find(keyword) != -1:
+				#print('---------')
 				return outStr
 
 	def positionCommand(self, game):
@@ -43,11 +44,15 @@ class UcciBrain:
 	def generate(self, game, moves):
 		self.sendCommand(self.positionCommand(game))
 		self.sendCommand(self.__levelCommand)
-		bestMoveKey = 'bestmove '
+		bestMoveKey = 'bestmove'
 		bestMoveLine = self.getResult(bestMoveKey)
+		if bestMoveLine.startswith('nobestmove'):
+			average = 1./len(moves)
+			return [average for i in range(len(moves))]
+
 		assert bestMoveLine.startswith(bestMoveKey)
 
-		bestMoveStr = bestMoveLine[len(bestMoveKey):len(bestMoveKey)+4]
+		bestMoveStr = bestMoveLine[len(bestMoveKey)+1:len(bestMoveKey)+5]
 		#print(bestMoveStr)
 		fx = ord(bestMoveStr[0])-ord('a')
 		fy = ord(bestMoveStr[1])-ord('0')
