@@ -44,6 +44,25 @@ names = [
 	'yssy',
 ]
 
+depths = [
+	[5, 10],
+	[4, 7],
+	[4, 8],
+	[5, 9],
+	[4, 8],
+	[4, 8],
+	[4, 8],
+	[4, 8],
+	[5, 5],
+	[5, 10],
+	[4, 8],
+	[4, 8],
+	[5, 9],
+	[4, 8],
+	[5, 9],
+	[5, 9],
+]
+
 def play(red, black):
 	noEatCnt = 0
 	game = Chessgame()
@@ -96,12 +115,14 @@ def save(game):
 	appendFile('data/train.txt', saveLines)
 
 assert len(brains) == len(names)
+assert len(brains) == len(depths)
+
 for i in range(10000):
 	redIndex = random.randint(0, len(brains) - 1)
 	blackIndex = random.randint(0, len(brains) - 1)
 
-	redDepth = random.randint(5, 11)
-	blackDepth = random.randint(5, 11)
+	redDepth = random.randint(depths[redIndex][0], depths[redIndex][1])
+	blackDepth = random.randint(depths[blackIndex][0], depths[blackIndex][1])
 
 	try:
 		brainStart = time.time()
