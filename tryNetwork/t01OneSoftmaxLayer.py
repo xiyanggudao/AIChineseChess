@@ -2,13 +2,6 @@ from inputData.DataSet import DataSet
 import tensorflow as tf
 
 
-def addLayer(x, inputSize, outputSize):
-	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.01, 0.1))
-	b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.1))
-	z = tf.matmul(x, w) + b
-	y = tf.nn.relu(z)
-	return y
-
 def pickySoftmax(x, inputSize, outputSize, pickySwitch):
 	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.01, 0.1))
 	b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.1))
@@ -24,8 +17,7 @@ boardInput = tf.placeholder(tf.float32, [None, 692])
 moveInput = tf.placeholder(tf.float32, [None, 4209])
 prediction = tf.placeholder(tf.float32, [None, 4209])
 
-l1 = addLayer(boardInput, 692, 692)
-output = pickySoftmax(l1, 692, 4209, moveInput)
+output = pickySoftmax(boardInput, 692, 4209, moveInput)
 
 loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 0.000001)))
 train = tf.train.GradientDescentOptimizer(0.001).minimize(loss)
@@ -37,8 +29,8 @@ tf.summary.scalar('loss', loss)
 merged_summary_op = tf.summary.merge_all()
 summary_writer = tf.summary.FileWriter('logs')
 
-inputData = DataSet('data/merged.txt')
-for i in range(300):
+inputData = DataSet('../data/merged.txt')
+for i in range(5000):
 	boards, moves, predictions = inputData.nextBatch(128)
 	feed = {
 		boardInput: boards,

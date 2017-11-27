@@ -26,6 +26,8 @@ class UcciBrain:
 	def getResult(self, keyword):
 		while True:
 			out = self.__process.stdout.readline()
+			if self.__process.poll():
+				raise Exception('get result of subprocess failed')
 			outStr = out.decode(encoding='utf-8', errors='ignore')
 			#print(outStr, end='')
 			if outStr.find(keyword) != -1:
