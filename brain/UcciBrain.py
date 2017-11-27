@@ -56,7 +56,7 @@ class UcciBrain:
 		self.sendCommand(self.__levelCommand)
 		bestMoveKey = 'bestmove'
 		bestMoveLine = self.getResult(bestMoveKey)
-		if bestMoveLine.startswith('nobestmove'):
+		if bestMoveLine.startswith('nobestmove') or bestMoveLine.find('resign') != -1:
 			average = 1./len(moves)
 			return [average for i in range(len(moves))]
 
