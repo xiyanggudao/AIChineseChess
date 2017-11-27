@@ -1,5 +1,6 @@
 import subprocess
 from chess.ChessData import Move
+from threading import Timer
 
 class UcciBrain:
 
@@ -25,7 +26,14 @@ class UcciBrain:
 
 	def getResult(self, keyword):
 		while True:
-			out = self.__process.stdout.readline()
+			kill = lambda process: process.kill()
+			my_timer = Timer(60, kill, [self.__process])
+			try:
+				my_timer.start()
+				out = self.__process.stdout.readline()
+			finally:
+				my_timer.cancel()
+
 			if self.__process.poll():
 				raise Exception('get result of subprocess failed')
 			outStr = out.decode(encoding='utf-8', errors='ignore')
@@ -60,6 +68,8 @@ class UcciBrain:
 		fy = ord(bestMoveStr[1])-ord('0')
 		tx = ord(bestMoveStr[2])-ord('a')
 		ty = ord(bestMoveStr[3])-ord('0')
+		if not (0 <= fx <= 8 and 0 <= tx <= 8 and 0 <= fy <= 9 and 0 <= ty <= 9):
+			raise Exception('unknown best move ', bestMoveLine)
 		move = Move((fx, fy), (tx, ty), game.chessmanAt((fx, fy)), game.chessmanAt((tx, ty)))
 
 		probability = [0 for i in range(len(moves))]
