@@ -6,6 +6,7 @@ class UcciBrain:
 
 	def __init__(self, path):
 		self.setDepth(7)
+		self.setStartpos('startpos')
 		self.__process = subprocess.Popen(
 			[path],
 			stdin=subprocess.PIPE,
@@ -19,6 +20,9 @@ class UcciBrain:
 
 	def setDepth(self, depth):
 		self.__levelCommand = 'go depth '+str(depth)+'\n'
+
+	def setStartpos(self, startpos):
+		self.__startpos = startpos
 
 	def sendCommand(self, commandStr):
 		self.__process.stdin.write(commandStr.encode())
@@ -43,7 +47,7 @@ class UcciBrain:
 				return outStr
 
 	def positionCommand(self, game):
-		commandStr = 'position startpos'
+		commandStr = 'position '+self.__startpos
 		for i in range(game.moveSize()):
 			if i == 0:
 				commandStr += ' moves'
@@ -71,6 +75,9 @@ class UcciBrain:
 		if not (0 <= fx <= 8 and 0 <= tx <= 8 and 0 <= fy <= 9 and 0 <= ty <= 9):
 			raise Exception('unknown best move ', bestMoveLine)
 		move = Move((fx, fy), (tx, ty), game.chessmanAt((fx, fy)), game.chessmanAt((tx, ty)))
+
+		if moves.count(move) != 1:
+			raise Exception('illegal move ', game.ucciFen(), bestMoveLine)
 
 		probability = [0 for i in range(len(moves))]
 		probability[moves.index(move)] = 1.
