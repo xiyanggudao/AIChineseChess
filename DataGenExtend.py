@@ -28,17 +28,8 @@ def play(fen):
 	playingBrain = MoveProbability(brain)
 	game.setWithUcciFen(fen)
 
-	while True:
-		try:
-			brain.setStartpos('fen '+fen)
-			playingBrain.generateProbability(game, moveGen.generateLegalMoves())
-		except:
-			f = open("log.txt", 'a')
-			traceback.print_exc(file=f)
-			f.close()
-			reset()
-		else:
-			break
+	brain.setStartpos('fen '+fen)
+	playingBrain.generateProbability(game, moveGen.generateLegalMoves())
 	move = playingBrain.chooseByProbability()
 
 	saveLine = fen+':'+move.ucciStr()+'\n'
@@ -65,7 +56,16 @@ while True:
 	end = line.index(':')
 	fen = line[0: end]
 	playStart = time.time()
-	play(fen)
+	while True:
+		try:
+			play(fen)
+		except:
+			f = open("log.txt", 'a')
+			traceback.print_exc(file=f)
+			f.close()
+			reset()
+		else:
+			break
 	playEnd = time.time()
 	print(index, 'time', round(playEnd - playStart, 2))
 	index += 1

@@ -31,7 +31,7 @@ class UcciBrain:
 	def getResult(self, keyword):
 		while True:
 			kill = lambda process: process.kill()
-			my_timer = Timer(60, kill, [self.__process])
+			my_timer = Timer(180, kill, [self.__process])
 			try:
 				my_timer.start()
 				out = self.__process.stdout.readline()
