@@ -3,15 +3,16 @@ from chess.MoveGenerator import MoveGenerator
 from chess.Chessman import Chessman
 import brain.NetworkFeature as nf
 import random
+import gzip
 
 class DataSet:
 
 	def __init__(self, filePath):
 		self.fens = []
 		self.moves = []
-		file = open(filePath, 'r')
+		file = gzip.open(filePath, 'r')
 		while True:
-			line = file.readline()
+			line = file.readline().decode()
 			if not line:
 				break
 			sep = line.index(':')
@@ -32,12 +33,12 @@ class DataSet:
 		moves = []
 		predictions = []
 
-		for i in range(size):
-			j = random.randint(0, len(self.fens)-1)
-			game.setWithUcciFen(self.fens[j])
+		indexes = random.sample(range(len(self.fens)), size)
+		for i in indexes:
+			game.setWithUcciFen(self.fens[i])
 			bf, mf = nf.inputFeature(game.chessmenOnBoard(), moveGen.generateLegalMoves())
 			predic = [0 for i in range(len(mf))]
-			for moveStr in self.moves[j]:
+			for moveStr in self.moves[i]:
 				fx = ord(moveStr[0]) - ord('a')
 				fy = ord(moveStr[1]) - ord('0')
 				tx = ord(moveStr[2]) - ord('a')
@@ -47,7 +48,7 @@ class DataSet:
 				color = Chessman.color(chessman)
 				id = nf.moveFeatureId(type, color, (fx, fy), (tx, ty), game.activeColor())
 				assert mf[id] == 1
-				predic[id] = 1./len(self.moves[j])
+				predic[id] = 1./len(self.moves[i])
 			boards.append(bf)
 			moves.append(mf)
 			predictions.append(predic)
