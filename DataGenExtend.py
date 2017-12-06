@@ -46,6 +46,7 @@ def reset():
 
 file = open('data/merged.txt', 'r')
 index = 0
+startLine = 0
 reset()
 while True:
 	if index % 200 == 0:
@@ -53,19 +54,19 @@ while True:
 	line = file.readline()
 	if not line:
 		break
+	if index < startLine:
+		index += 1
+		continue
 	end = line.index(':')
 	fen = line[0: end]
 	playStart = time.time()
-	while True:
-		try:
-			play(fen)
-		except:
-			f = open("log.txt", 'a')
-			traceback.print_exc(file=f)
-			f.close()
-			reset()
-		else:
-			break
+	try:
+		play(fen)
+	except:
+		f = open("log.txt", 'a')
+		traceback.print_exc(file=f)
+		f.close()
+		reset()
 	playEnd = time.time()
 	print(index, 'time', round(playEnd - playStart, 2))
 	index += 1
