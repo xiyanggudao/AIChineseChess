@@ -122,6 +122,7 @@ def inputFeature(chessmenOnBoard, moves):
 	boardFeature = [0 for i in range((9+5+7+90*3+55)*2)]
 	for piece in chessmenOnBoard:
 		id = chessmanFeatureId(piece.type, piece.color, piece.position, active)
+		assert boardFeature[id] == 0
 		boardFeature[id] = 1
 
 	moveFeature = [0 for i in range(9*4+5*4+7*4+90*8+90*18*2+55*3)]

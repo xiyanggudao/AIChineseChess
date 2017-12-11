@@ -1,5 +1,6 @@
 from inputData.DataSet import DataSet
 import tensorflow as tf
+import time
 
 
 def pickySoftmax(x, inputSize, outputSize, pickySwitch):
@@ -29,8 +30,11 @@ tf.summary.scalar('loss', loss)
 merged_summary_op = tf.summary.merge_all()
 summary_writer = tf.summary.FileWriter('logs')
 
-inputData = DataSet('../data/merged.txt')
-for i in range(5000):
+dataStart = time.time()
+inputData = DataSet('../data/test.gz')
+dataEnd = time.time()
+print('data time', round(dataEnd - dataStart, 2), 'size', len(inputData.dataIds))
+for i in range(10):
 	boards, moves, predictions = inputData.nextBatch(128)
 	feed = {
 		boardInput: boards,
