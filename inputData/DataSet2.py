@@ -6,6 +6,7 @@ import brain.NetworkFeature as nf
 import random
 import gzip
 import os
+import numpy as np
 
 def writeInt(file, val):
 	s = str(val)
@@ -42,11 +43,7 @@ class DataId:
 		id = self.__moveId(move)
 		self.predicIds.append(id)
 
-	def inputFeature(self):
-		boardFeature = [[[0 for k in range(14)] for j in range(10)] for i in range(9)]
-		moveFeature = [0 for i in range(4209)]
-		predic = [0 for i in range(4209)]
-
+	def inputFeature(self, boardFeature, moveFeature, predic):
 		for id in self.boardIds:
 			x, y, h = nf.imageIdToIndex(id)
 			assert boardFeature[x][y][h] == 0
@@ -60,8 +57,6 @@ class DataId:
 			assert moveFeature[id] == 1
 			assert predic[id] == 0
 			predic[id] = 1. / len(self.predicIds)
-
-		return (boardFeature, moveFeature, predic)
 
 	def serialize(self, file):
 		writeInt(file, len(self.boardIds))
@@ -161,15 +156,12 @@ class DataSet:
 		return (game, moveGen.generateLegalMoves(), predicMove)
 
 	def nextBatch(self, size):
-		boards = []
-		moves = []
-		predictions = []
+		boards = np.zeros((size, 9, 10, 14), dtype=np.float32)
+		moves = np.zeros((size, 4209), dtype=np.float32)
+		predictions = np.zeros((size, 4209), dtype=np.float32)
 
 		indexes = random.sample(range(len(self.dataIds)), size)
-		for i in indexes:
-			bf, mf, predic = self.dataIds[i].inputFeature()
-			boards.append(bf)
-			moves.append(mf)
-			predictions.append(predic)
+		for i in range(len(indexes)):
+			self.dataIds[indexes[i]].inputFeature(boards[i], moves[i], predictions[i])
 
 		return (boards, moves, predictions)
