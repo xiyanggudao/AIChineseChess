@@ -3,9 +3,20 @@ import tensorflow as tf
 import time
 
 
+def addResBlock(x, inputSize):
+	w1 = tf.Variable(tf.random_uniform([inputSize, inputSize], -0.001, 0.01))
+	b1 = tf.Variable(tf.random_uniform([1, inputSize], 0, 0.1))
+	z1 = tf.matmul(x, w1) + b1
+	y1 = tf.nn.relu(z1)
+	w2 = tf.Variable(tf.random_uniform([inputSize, inputSize], -0.001, 0.01))
+	b2 = tf.Variable(tf.random_uniform([1, inputSize], 0, 0.1))
+	z2 = tf.matmul(y1, w2) + b2 + x
+	y2 = tf.nn.relu(z2)
+	return y2
+
 def pickySoftmax(x, inputSize, outputSize, pickySwitch):
-	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.01, 0.1))
-	b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.1))
+	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.001, 0.01))
+	b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.01))
 	z = tf.matmul(x, w) + b
 	# softmax[i] = exp(input[i]) / sum(exp(input))
 	# pickySoftmax[i] = pickySwitch[i]*exp(input[i]) / sum(pickySwitch*exp(input))
@@ -18,10 +29,12 @@ boardInput = tf.placeholder(tf.float32, [None, 692])
 moveInput = tf.placeholder(tf.float32, [None, 4209])
 prediction = tf.placeholder(tf.float32, [None, 4209])
 
-output = pickySoftmax(boardInput, 692, 4209, moveInput)
+l1 = addResBlock(boardInput, 692)
+l2 = addResBlock(l1, 692)
+output = pickySoftmax(l2, 692, 4209, moveInput)
 
 loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 0.000001)))
-train = tf.train.GradientDescentOptimizer(0.002).minimize(loss)
+train = tf.train.GradientDescentOptimizer(1e-5).minimize(loss)
 
 correct_prediction = tf.equal(tf.argmax(prediction * output,1), tf.argmax(output,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
@@ -61,6 +74,6 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-test loss 42844.4
-test accuracy 0.468958
+test loss 50128.7
+test accuracy 0.304257
 '''

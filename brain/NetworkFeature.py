@@ -149,3 +149,30 @@ def outputProbability(moves, outputFeature):
 	assert abs(totalProbability - totalProbability2) < 0.000001
 
 	return probability
+
+def boardImageIds(chessmenOnBoard, active):
+	ret = []
+	typeIndexMap = {
+		Chessman.king: 0,
+		Chessman.mandarin: 1,
+		Chessman.elephant: 2,
+		Chessman.knight: 3,
+		Chessman.rook: 4,
+		Chessman.cannon: 5,
+		Chessman.pawn: 6,
+	}
+	for piece in chessmenOnBoard:
+		if active == piece.color:
+			offset = 0
+		else:
+			offset = 7
+		typeIndex = offset+typeIndexMap[piece.type]
+		id = typeIndex*90+piece.y*9+piece.x
+		ret.append(id)
+	return ret
+
+def imageIdToIndex(id):
+	h = id//90
+	y = id%90//9
+	x = id%9
+	return (x, y, h)

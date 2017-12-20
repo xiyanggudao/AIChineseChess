@@ -1,6 +1,7 @@
 import brain.NetworkFeature as nf
 from chess.Chessman import Chessman
 import unittest
+from chess.Chessgame import Chessgame
 
 class TestNetworkFeature(unittest.TestCase):
 
@@ -492,6 +493,51 @@ class TestNetworkFeature(unittest.TestCase):
 				self.assertTrue(id in range(4044, 4209))
 				idSet.add(id)
 		self.assertEqual(len(idSet), 165)
+
+	def testBoardImage(self):
+		expect = [[[0 for k in range(14)] for j in range(10)] for i in range(9)]
+		expect[4][0][0] = 1
+		expect[3][0][1] = 1
+		expect[5][0][1] = 1
+		expect[2][0][2] = 1
+		expect[6][0][2] = 1
+		expect[1][0][3] = 1
+		expect[7][0][3] = 1
+		expect[0][0][4] = 1
+		expect[8][0][4] = 1
+		expect[4][2][5] = 1
+		expect[7][2][5] = 1
+		expect[0][3][6] = 1
+		expect[2][3][6] = 1
+		expect[4][3][6] = 1
+		expect[6][3][6] = 1
+		expect[8][3][6] = 1
+		expect[0][6][13] = 1
+		expect[2][6][13] = 1
+		expect[4][6][13] = 1
+		expect[6][6][13] = 1
+		expect[8][6][13] = 1
+		expect[1][7][12] = 1
+		expect[7][7][12] = 1
+		expect[0][9][11] = 1
+		expect[8][9][11] = 1
+		expect[2][7][10] = 1
+		expect[7][9][10] = 1
+		expect[2][9][9] = 1
+		expect[6][9][9] = 1
+		expect[3][9][8] = 1
+		expect[5][9][8] = 1
+		expect[4][9][7] = 1
+
+		game = Chessgame()
+		game.makeMove((1, 2), (4, 2))
+		game.makeMove((1, 9), (2, 7))
+		imageIds = nf.boardImageIds(game.chessmenOnBoard(), game.activeColor())
+
+		self.assertEqual(len(imageIds), 32)
+		for id in imageIds:
+			x, y, h = nf.imageIdToIndex(id)
+			self.assertEqual(expect[x][y][h], 1)
 
 
 if __name__ == '__main__':

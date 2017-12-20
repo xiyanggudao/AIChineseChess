@@ -3,9 +3,16 @@ import tensorflow as tf
 import time
 
 
-def pickySoftmax(x, inputSize, outputSize, pickySwitch):
-	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.01, 0.1))
+def addLayer(x, inputSize, outputSize):
+	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.001, 0.01))
 	b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.1))
+	z = tf.matmul(x, w) + b
+	y = tf.nn.relu(z)
+	return y
+
+def pickySoftmax(x, inputSize, outputSize, pickySwitch):
+	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.001, 0.01))
+	b = tf.Variable(tf.random_uniform([1, outputSize], 0, 0.01))
 	z = tf.matmul(x, w) + b
 	# softmax[i] = exp(input[i]) / sum(exp(input))
 	# pickySoftmax[i] = pickySwitch[i]*exp(input[i]) / sum(pickySwitch*exp(input))
@@ -18,10 +25,14 @@ boardInput = tf.placeholder(tf.float32, [None, 692])
 moveInput = tf.placeholder(tf.float32, [None, 4209])
 prediction = tf.placeholder(tf.float32, [None, 4209])
 
-output = pickySoftmax(boardInput, 692, 4209, moveInput)
+l1 = addLayer(boardInput, 692, 692)
+l2 = addLayer(l1, 692, 692)
+l3 = addLayer(l2, 692, 692)
+l4 = addLayer(l3, 692, 692)
+output = pickySoftmax(l4, 692, 4209, moveInput)
 
 loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 0.000001)))
-train = tf.train.GradientDescentOptimizer(0.002).minimize(loss)
+train = tf.train.GradientDescentOptimizer(1e-5).minimize(loss)
 
 correct_prediction = tf.equal(tf.argmax(prediction * output,1), tf.argmax(output,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
@@ -61,6 +72,6 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-test loss 42844.4
-test accuracy 0.468958
+test loss 51229.6
+test accuracy 0.259115
 '''

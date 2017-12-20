@@ -1,7 +1,16 @@
-from inputData.DataSet import DataSet
 import tensorflow as tf
 import time
+import sys
+sys.path.append("..")
+from inputData.DataSet2 import DataSet
 
+
+def addLayer(x, in_channels, out_channels):
+	w = tf.Variable(tf.random_uniform([3, 3, in_channels, out_channels], -0.01, 0.01))
+	b = tf.Variable(tf.random_uniform([out_channels], 0, 0.01))
+	z = tf.nn.conv2d(x, w, strides=[1, 1, 1, 1], padding='SAME') + b
+	y = tf.nn.relu(z)
+	return y
 
 def pickySoftmax(x, inputSize, outputSize, pickySwitch):
 	w = tf.Variable(tf.random_uniform([inputSize, outputSize], -0.01, 0.1))
@@ -14,14 +23,16 @@ def pickySoftmax(x, inputSize, outputSize, pickySwitch):
 	return y
 
 
-boardInput = tf.placeholder(tf.float32, [None, 692])
+boardInput = tf.placeholder(tf.float32, [None, 9, 10, 14])
 moveInput = tf.placeholder(tf.float32, [None, 4209])
 prediction = tf.placeholder(tf.float32, [None, 4209])
 
-output = pickySoftmax(boardInput, 692, 4209, moveInput)
+l1 = addLayer(boardInput, 14, 128)
+flat = tf.reshape(l1, [-1, 9*10*128])
+output = pickySoftmax(flat, 9*10*128, 4209, moveInput)
 
-loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 0.000001)))
-train = tf.train.GradientDescentOptimizer(0.002).minimize(loss)
+loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 1e-8)))
+train = tf.train.GradientDescentOptimizer(1e-6).minimize(loss)
 
 correct_prediction = tf.equal(tf.argmax(prediction * output,1), tf.argmax(output,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
@@ -61,6 +72,6 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-test loss 42844.4
-test accuracy 0.468958
+test loss 51837.1
+test accuracy 0.259774
 '''
