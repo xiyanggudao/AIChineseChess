@@ -33,6 +33,7 @@ l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
+l1 = addLayer(l1, 128, 128)
 flat = tf.reshape(l1, [-1, 9*10*128])
 output = pickySoftmax(flat, 9*10*128, 4209, moveInput)
 
@@ -56,7 +57,7 @@ dataEnd = time.time()
 print('data time', round(dataEnd - dataStart, 2), 'size', len(inputData.dataIds))
 dataTime = 0
 trainTime = 0
-for i in range(300000):
+for i in range(600000):
 	dataStart = time.time()
 	boards, moves, predictions = inputData.nextBatch(128)
 	dataTime += time.time() - dataStart
@@ -75,7 +76,7 @@ for i in range(300000):
 
 print('train finished dataTime', int(dataTime), 'trainTime', int(trainTime))
 testData = DataSet('../data/test.gz')
-boards, moves, predictions = testData.nextBatch(len(testData.dataIds))
+boards, moves, predictions = testData.nextBatch(12000)#len(testData.dataIds))
 res = session.run([loss, accuracy], feed_dict = {
 	boardInput: boards,
 	moveInput: moves,
@@ -83,3 +84,13 @@ res = session.run([loss, accuracy], feed_dict = {
 })
 print('test loss', res[0])
 print('test accuracy', res[1])
+'''
+iteration 300000
+test loss 36962.7
+test accuracy 0.262167
+'''
+'''
+iteration 600000
+test loss 36930.4
+test accuracy 0.261333
+'''
