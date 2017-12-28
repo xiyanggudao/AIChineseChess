@@ -13,10 +13,10 @@ layer_cnt = 0
 def addLayer(x, in_channels, out_channels, kSize=5):
 	global layer_cnt
 	layer_cnt += 1
-	w1 = tf.Variable(tf.truncated_normal([kSize, kSize, in_channels, out_channels], 0., 0.02))
-	b1 = tf.Variable(tf.constant(0.1, shape=[out_channels]))
-	z1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding='SAME') + b1
-	norm1 = batchNormalization(z1)
+	w1 = tf.Variable(tf.truncated_normal([kSize, kSize, in_channels, out_channels], 0., 0.1))
+	b1 = tf.Variable(tf.truncated_normal([out_channels], 0.1, 0.05))
+	z1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding='SAME')
+	norm1 = batchNormalization(z1) + b1
 	tf.summary.histogram("params/weight" + str(layer_cnt), w1)
 	tf.summary.histogram("params/bias" + str(layer_cnt), b1)
 	tf.summary.histogram("res/z" + str(layer_cnt), z1)
@@ -24,10 +24,10 @@ def addLayer(x, in_channels, out_channels, kSize=5):
 	y = tf.nn.relu(norm1)
 	if in_channels == out_channels:
 		layer_cnt += 1
-		w2 = tf.Variable(tf.truncated_normal([5, 5, in_channels, out_channels], 0., 0.02))
-		b2 = tf.Variable(tf.constant(0.1, shape=[out_channels]))
-		z2 = tf.nn.conv2d(y, w2, strides=[1, 1, 1, 1], padding='SAME') + b2 + x
-		norm2 = batchNormalization(z2)
+		w2 = tf.Variable(tf.truncated_normal([5, 5, in_channels, out_channels], 0., 0.1))
+		b2 = tf.Variable(tf.truncated_normal([out_channels], 0.1, 0.05))
+		z2 = tf.nn.conv2d(y, w2, strides=[1, 1, 1, 1], padding='SAME') + x
+		norm2 = batchNormalization(z2) + b2
 		tf.summary.histogram("params/weight" + str(layer_cnt), w2)
 		tf.summary.histogram("params/bias" + str(layer_cnt), b2)
 		tf.summary.histogram("res/z" + str(layer_cnt), z2)
@@ -38,10 +38,10 @@ def addLayer(x, in_channels, out_channels, kSize=5):
 def pickySoftmax(x, inputSize, outputSize, pickySwitch):
 	global layer_cnt
 	layer_cnt += 1
-	w = tf.Variable(tf.truncated_normal([inputSize, outputSize], 0, 0.01))
-	b = tf.Variable(tf.constant(0.1, shape=[1, outputSize]))
-	z = tf.matmul(x, w) + b
-	norm = batchNormalization(z)
+	w = tf.Variable(tf.truncated_normal([inputSize, outputSize], 0, 0.1))
+	b = tf.Variable(tf.truncated_normal([1, outputSize], 0.1, 0.05))
+	z = tf.matmul(x, w)
+	norm = batchNormalization(z) + b
 	tf.summary.histogram("params/weight" + str(layer_cnt), w)
 	tf.summary.histogram("params/bias" + str(layer_cnt), b)
 	tf.summary.histogram("res/z" + str(layer_cnt), z)
@@ -66,7 +66,7 @@ flat = tf.reshape(l1, [-1, 9*10*64])
 output = pickySoftmax(flat, 9*10*64, 4209, moveInput)
 
 loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 1e-8)))
-train = tf.train.GradientDescentOptimizer(1e-5).minimize(loss)
+train = tf.train.GradientDescentOptimizer(1e-4).minimize(loss)
 
 correct_prediction = tf.equal(tf.argmax(prediction * output,1), tf.argmax(output,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
@@ -77,15 +77,19 @@ session.run(tf.global_variables_initializer())
 tf.summary.scalar('loss', loss)
 tf.summary.scalar('accuracy', accuracy)
 merged_summary_op = tf.summary.merge_all()
+testLoss = tf.summary.scalar('testLoss', loss)
+testAccuracy = tf.summary.scalar('testAccuracy', accuracy)
+merged_summary_op_test = tf.summary.merge([testLoss, testAccuracy])
 summary_writer = tf.summary.FileWriter('logs')
 
 dataStart = time.time()
 inputData = DataSet('../data/train.gz')
+testData = DataSet('../data/test.gz')
 dataEnd = time.time()
 print('data time', round(dataEnd - dataStart, 2), 'size', len(inputData.dataIds))
 dataTime = 0
 trainTime = 0
-for i in range(20000):
+for i in range(400000):
 	dataStart = time.time()
 	boards, moves, predictions = inputData.nextBatch(128)
 	dataTime += time.time() - dataStart
@@ -94,8 +98,16 @@ for i in range(20000):
 		moveInput: moves,
 		prediction: predictions,
 	}
-	if i%200 == 0:
+	if i%500 == 0:
 		summary_str = session.run(merged_summary_op, feed_dict = feed)
+		summary_writer.add_summary(summary_str, i)
+		boards, moves, predictions = testData.nextBatch(1024)
+		feed = {
+			boardInput: boards,
+			moveInput: moves,
+			prediction: predictions,
+		}
+		summary_str = session.run(merged_summary_op_test, feed_dict = feed)
 		summary_writer.add_summary(summary_str, i)
 	trainStart = time.time()
 	session.run(train, feed_dict = feed)
@@ -111,7 +123,6 @@ res = session.run([loss, accuracy], feed_dict={
 })
 print('train loss', res[0])
 print('train accuracy', res[1])
-testData = DataSet('../data/test.gz')
 boards, moves, predictions = testData.nextBatch(10000)#len(testData.dataIds))
 res = session.run([loss, accuracy], feed_dict = {
 	boardInput: boards,
@@ -121,14 +132,8 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-iteration 300000
-test loss 27266.2
-test accuracy 0.4326（过拟合，训练精度已达0.8）
-'''
-'''
-iteration 20000
-train loss 28311.4
-train accuracy 0.3791
-test loss 29837.4
-test accuracy 0.3319
+train loss 19989.2
+train accuracy 0.7305
+test loss 19695.8
+test accuracy 0.7478
 '''

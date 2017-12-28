@@ -6,6 +6,7 @@ import brain.NetworkFeature as nf
 import random
 import gzip
 import os
+import numpy as np
 
 def writeInt(file, val):
 	s = str(val)
@@ -45,11 +46,7 @@ class DataId:
 		id = self.__moveId(move)
 		self.predicIds.append(id)
 
-	def inputFeature(self):
-		boardFeature = [0 for i in range(692)]
-		moveFeature = [0 for i in range(4209)]
-		predic = [0 for i in range(4209)]
-
+	def inputFeature(self, boardFeature, moveFeature, predic):
 		for id in self.boardIds:
 			assert boardFeature[id] == 0
 			boardFeature[id] = 1
@@ -163,15 +160,12 @@ class DataSet:
 		return (game, moveGen.generateLegalMoves(), predicMove)
 
 	def nextBatch(self, size):
-		boards = []
-		moves = []
-		predictions = []
+		boards = np.zeros((size, 692), dtype=np.float32)
+		moves = np.zeros((size, 4209), dtype=np.float32)
+		predictions = np.zeros((size, 4209), dtype=np.float32)
 
 		indexes = random.sample(range(len(self.dataIds)), size)
-		for i in indexes:
-			bf, mf, predic = self.dataIds[i].inputFeature()
-			boards.append(bf)
-			moves.append(mf)
-			predictions.append(predic)
+		for i in range(len(indexes)):
+			self.dataIds[indexes[i]].inputFeature(boards[i], moves[i], predictions[i])
 
 		return (boards, moves, predictions)

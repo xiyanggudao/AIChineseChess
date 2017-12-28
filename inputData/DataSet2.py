@@ -75,20 +75,20 @@ class DataId:
 		if size == None:
 			return None
 		ret = DataId()
-		ret.boardIds = []
+		ret.boardIds = np.empty(size, dtype=int)
 		for i in range(size):
 			val = readint(file)
-			ret.boardIds.append(val)
+			ret.boardIds[i] = val
 		size = readint(file)
-		ret.moveIds = []
+		ret.moveIds = np.empty(size, dtype=int)
 		for i in range(size):
 			val = readint(file)
-			ret.moveIds.append(val)
+			ret.moveIds[i] = val
 		size = readint(file)
-		ret.predicIds = []
+		ret.predicIds = np.empty(size, dtype=int)
 		for i in range(size):
 			val = readint(file)
-			ret.predicIds.append(val)
+			ret.predicIds[i] = val
 		return ret
 
 class DataSet:
