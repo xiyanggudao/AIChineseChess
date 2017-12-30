@@ -31,7 +31,7 @@ def onClick(pos):
 		board.addToSelection(pos)
 		move = Move(board.selectedPos(0), board.selectedPos(1),
 			game.chessmanAt(board.selectedPos(0)), game.chessmanAt(board.selectedPos(1)))
-		rule.setChessmenOnBoard(game.chessmenOnBoard())
+		rule.setBoard(game.board())
 		rule.setActiveColor(game.activeColor())
 		if rule.isMoveLegal(move):
 			game.makeMove(board.selectedPos(0), board.selectedPos(1))

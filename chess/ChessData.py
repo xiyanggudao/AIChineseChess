@@ -41,6 +41,8 @@ class ChessmanOnBoard:
 class Move:
 
 	def __init__(self, fromPos, toPos, moveChessman, ateChessman):
+		assert moveChessman is not None
+		assert ateChessman is not None
 		self.__fromPos = fromPos
 		self.__toPos = toPos
 		self.__moveChessman = moveChessman

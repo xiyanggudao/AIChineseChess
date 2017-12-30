@@ -2,7 +2,7 @@ import tensorflow as tf
 import time
 import sys
 sys.path.append("..")
-from inputData.DataSet2 import DataSet
+from inputData.DataSet3 import DataSet
 
 
 def batchNormalization(x):
@@ -10,7 +10,7 @@ def batchNormalization(x):
 	return tf.nn.batch_normalization(x, mean, variance, 0, 1, 1e-8)
 
 layer_cnt = 0
-def addLayer(x, in_channels, out_channels, kSize=5):
+def addLayer(x, in_channels, out_channels, kSize=3):
 	global layer_cnt
 	layer_cnt += 1
 	w1 = tf.Variable(tf.truncated_normal([kSize, kSize, in_channels, out_channels], 0., 0.1))
@@ -54,16 +54,16 @@ def pickySoftmax(x, inputSize, outputSize, pickySwitch):
 
 
 boardInput = tf.placeholder(tf.float32, [None, 9, 10, 14])
-moveInput = tf.placeholder(tf.float32, [None, 4209])
-prediction = tf.placeholder(tf.float32, [None, 4209])
+moveInput = tf.placeholder(tf.float32, [None, 2062])
+prediction = tf.placeholder(tf.float32, [None, 2062])
 
 l1 = addLayer(boardInput, 14, 128)
 l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
-l1 = addLayer(l1, 128, 64, 1)
-flat = tf.reshape(l1, [-1, 9*10*64])
-output = pickySoftmax(flat, 9*10*64, 4209, moveInput)
+l1 = addLayer(l1, 128, 24, 1)
+flat = tf.reshape(l1, [-1, 9*10*24])
+output = pickySoftmax(flat, 9*10*24, 2062, moveInput)
 
 loss = - tf.reduce_sum(prediction * tf.log(tf.maximum(output, 1e-8)))
 train = tf.train.GradientDescentOptimizer(1e-4).minimize(loss)
@@ -132,8 +132,8 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-train loss 19989.2
-train accuracy 0.7305
-test loss 19695.8
-test accuracy 0.7478
+train loss 22629.7
+train accuracy 0.5883
+test loss 22307.4
+test accuracy 0.6099
 '''

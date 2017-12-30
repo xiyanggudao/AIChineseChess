@@ -24,20 +24,18 @@ class DataId:
 		pass
 
 	def __moveId(self, move):
-		active = Chessman.color(move.moveChessman)
-		type = Chessman.type(move.moveChessman)
-		color = Chessman.color(move.moveChessman)
-		id = nf.moveFeatureId(type, color, move.fromPos, move.toPos, active)
+		id = nf.moveFeatureId2(move.fromPos, move.toPos)
 		return id
 
 	def setBoard(self, chessmenOnBoard, moves):
 		active = Chessman.color(moves[0].moveChessman)
 		self.boardIds = nf.boardImageIds(chessmenOnBoard, active)
-		self.moveIds = []
+		self.moveIds = np.empty(len(moves), np.int32)
 		self.predicIds = []
-		for move in moves:
+		for i in range(len(moves)):
+			move = moves[i]
 			id = self.__moveId(move)
-			self.moveIds.append(id)
+			self.moveIds[i] = id
 
 	def addPredicMove(self, move):
 		id = self.__moveId(move)
@@ -95,7 +93,7 @@ class DataSet:
 
 	def __init__(self, filePath):
 		self.dataIds = []
-		tmpPath = filePath+'.tmp2'
+		tmpPath = filePath+'.tmp3'
 		if os.path.exists(tmpPath):
 			self.__loadFromTmp(tmpPath)
 		else:
@@ -119,7 +117,12 @@ class DataSet:
 
 	def __loadFromGz(self, filePath):
 		file = gzip.open(filePath, 'r')
+		game = Chessgame()
+		moveGen = MoveGenerator(game)
 		lastFen = ''
+		t1 = 0
+		t2 = 0
+		t3 = 0
 		while True:
 			line = file.readline().decode()
 			if not line:
@@ -128,20 +131,18 @@ class DataSet:
 			fen = line[0: sep]
 			moveStr = line[sep+1: sep+5]
 			if len(self.dataIds) > 0 and lastFen == fen:
-				game, moves, predicMove = self.__getGameAndMove(fen, moveStr)
+				game, moves, predicMove = self.__getGameAndMove(fen, moveStr, game, moveGen)
 				self.dataIds[-1].addPredicMove(predicMove)
 			else:
 				lastFen = fen
-				game, moves, predicMove = self.__getGameAndMove(fen, moveStr)
+				game, moves, predicMove = self.__getGameAndMove(fen, moveStr, game, moveGen)
 				self.dataIds.append(DataId())
 				self.dataIds[-1].setBoard(game.chessmenOnBoard(), moves)
 				self.dataIds[-1].addPredicMove(predicMove)
 		file.close()
 
-	def __getGameAndMove(self, fen, moveStr):
-		game = Chessgame()
+	def __getGameAndMove(self, fen, moveStr, game, moveGen):
 		game.setWithUcciFen(fen)
-		moveGen = MoveGenerator(game)
 
 		fx = ord(moveStr[0]) - ord('a')
 		fy = ord(moveStr[1]) - ord('0')
@@ -160,8 +161,8 @@ class DataSet:
 
 	def nextBatch(self, size):
 		boards = np.zeros((size, 9, 10, 14), dtype=np.float32)
-		moves = np.zeros((size, 4209), dtype=np.float32)
-		predictions = np.zeros((size, 4209), dtype=np.float32)
+		moves = np.zeros((size, 2062), dtype=np.float32)
+		predictions = np.zeros((size, 2062), dtype=np.float32)
 
 		indexes = random.sample(range(len(self.dataIds)), size)
 		for i in range(len(indexes)):

@@ -1,4 +1,5 @@
 from chess.Chessman import Chessman
+import numpy as np
 
 def chessmanFeatureId(type, color, position, active):
 	if color == active:
@@ -151,7 +152,7 @@ def outputProbability(moves, outputFeature):
 	return probability
 
 def boardImageIds(chessmenOnBoard, active):
-	ret = []
+	ret = np.empty(len(chessmenOnBoard), np.int32)
 	typeIndexMap = {
 		Chessman.king: 0,
 		Chessman.mandarin: 1,
@@ -161,14 +162,15 @@ def boardImageIds(chessmenOnBoard, active):
 		Chessman.cannon: 5,
 		Chessman.pawn: 6,
 	}
-	for piece in chessmenOnBoard:
+	for i in range(len(chessmenOnBoard)):
+		piece = chessmenOnBoard[i]
 		if active == piece.color:
 			offset = 0
 		else:
 			offset = 7
 		typeIndex = offset+typeIndexMap[piece.type]
 		id = typeIndex*90+piece.y*9+piece.x
-		ret.append(id)
+		ret[i] = id
 	return ret
 
 def imageIdToIndex(id):
@@ -176,3 +178,69 @@ def imageIdToIndex(id):
 	y = id%90//9
 	x = id%9
 	return (x, y, h)
+
+def initMoveToIdMap(moveToIdMap):
+	moveToIdMap.fill(-1)
+	id = 0
+	# 纵横
+	for fx in range(9):
+		for fy in range(10):
+			for tx in range(9):
+				if fx != tx:
+					assert moveToIdMap[fx,fy,tx,fy] == -1
+					moveToIdMap[fx,fy,tx,fy] = id
+					id += 1
+			for ty in range(10):
+				if fy != ty:
+					assert moveToIdMap[fx,fy,fx,ty] == -1
+					moveToIdMap[fx,fy,fx,ty] = id
+					id += 1
+	# 马
+	kightPath = ((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1))
+	for fx in range(9):
+		for fy in range(10):
+			for path in kightPath:
+				tx = fx + path[0]
+				ty = fy + path[1]
+				if 0 <= tx < 9 and 0 <= ty < 10:
+					assert moveToIdMap[fx, fy, tx, ty] == -1
+					moveToIdMap[fx, fy, tx, ty] = id
+					id += 1
+	# 象
+	elephantPath = (
+		(2,0,0,2),(2,0,4,2),(0,2,2,0),(0,2,2,4),
+		(2,4,0,2),(2,4,4,2),(6,4,4,2),(6,4,8,2),
+		(8,2,6,4),(8,2,6,0),(6,0,8,2),(6,0,4,2),
+		(4,2,6,0),(4,2,2,0),(4,2,2,4),(4,2,6,4)
+	)
+	for path in elephantPath:
+		fx, fy, tx, ty = path
+		assert abs(fx-tx) == 2
+		assert abs(fy-ty) == 2
+		assert moveToIdMap[fx, fy, tx, ty] == -1
+		assert moveToIdMap[8-fx, 9-fy, 8-tx, 9-ty] == -1
+		moveToIdMap[fx, fy, tx, ty] = id
+		moveToIdMap[8-fx, 9-fy, 8-tx, 9-ty] = id
+		id += 1
+	# 士
+	mandarinPath = (
+		(4, 1, 3, 0), (4, 1, 5, 0), (4, 1, 3, 2), (4, 1, 5, 2),
+		(3, 0, 4, 1), (5, 0, 4, 1), (3, 2, 4, 1), (5, 2, 4, 1)
+	)
+	for path in mandarinPath:
+		fx, fy, tx, ty = path
+		assert abs(fx-tx) == 1
+		assert abs(fy-ty) == 1
+		assert moveToIdMap[fx, fy, tx, ty] == -1
+		assert moveToIdMap[8-fx, 9-fy, 8-tx, 9-ty] == -1
+		moveToIdMap[fx, fy, tx, ty] = id
+		moveToIdMap[8-fx, 9-fy, 8-tx, 9-ty] = id
+		id += 1
+	assert id == 2062
+
+moveToIdMap = np.empty((9,10,9,10),np.int32)
+initMoveToIdMap(moveToIdMap)
+def moveFeatureId2(fromPos, toPos):
+	id = moveToIdMap[fromPos[0],fromPos[1],toPos[0],toPos[1]]
+	assert id != -1
+	return id

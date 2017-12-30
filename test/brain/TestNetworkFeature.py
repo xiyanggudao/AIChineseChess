@@ -2,6 +2,7 @@ import brain.NetworkFeature as nf
 from chess.Chessman import Chessman
 import unittest
 from chess.Chessgame import Chessgame
+from chess.MoveGenerator import MoveGenerator
 
 class TestNetworkFeature(unittest.TestCase):
 
@@ -538,6 +539,26 @@ class TestNetworkFeature(unittest.TestCase):
 		for id in imageIds:
 			x, y, h = nf.imageIdToIndex(id)
 			self.assertEqual(expect[x][y][h], 1)
+
+	def testMoveFeatureId2(self):
+		game = Chessgame()
+		moveGen = MoveGenerator(game)
+		idSet = set()
+		moves = moveGen.generateLegalMoves()
+		for move in moves:
+			id = nf.moveFeatureId2(move.fromPos, move.toPos)
+			self.assertNotEqual(id, -1)
+			self.assertFalse(id in idSet)
+			idSet.add(id)
+
+		game.makeMove((1, 2), (4, 2))
+		idSet.clear()
+		moves = moveGen.generateLegalMoves()
+		for move in moves:
+			id = nf.moveFeatureId2(move.fromPos, move.toPos)
+			self.assertNotEqual(id, -1)
+			self.assertFalse(id in idSet)
+			idSet.add(id)
 
 
 if __name__ == '__main__':

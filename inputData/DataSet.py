@@ -157,7 +157,10 @@ class DataSet:
 			game.chessmanAt((fx, fy)), game.chessmanAt((tx, ty))
 		)
 
-		return (game, moveGen.generateLegalMoves(), predicMove)
+		moves = moveGen.generateLegalMoves()
+		assert predicMove in moves
+
+		return (game, moves, predicMove)
 
 	def nextBatch(self, size):
 		boards = np.zeros((size, 692), dtype=np.float32)

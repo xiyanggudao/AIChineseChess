@@ -53,7 +53,7 @@ class TestChessgame(unittest.TestCase):
 
 	def testChessmanAtPosition(self):
 		game = Chessgame()
-		self.assertEqual(game.chessmanAt((0, 1)), None)
+		self.assertEqual(game.chessmanAt((0, 1)), Chessman.invalid())
 		self.assertEqual(game.chessmanAt((0, 0)), Chessman.redRook())
 
 	def testActiveColor(self):
@@ -65,8 +65,8 @@ class TestChessgame(unittest.TestCase):
 		game.makeMove((1, 2), (4, 2))
 		self.assertEqual(game.moveSize(), 1)
 		self.assertEqual(game.activeColor(), Chessman.black)
-		self.assertEqual(game.lastMove(), Move((1, 2), (4, 2), Chessman.redCannon(), None))
-		self.assertEqual(game.chessmanAt((1, 2)), None)
+		self.assertEqual(game.lastMove(), Move((1, 2), (4, 2), Chessman.redCannon(), Chessman.invalid()))
+		self.assertEqual(game.chessmanAt((1, 2)), Chessman.invalid())
 		self.assertEqual(game.chessmanAt((4, 2)), Chessman.redCannon())
 		self.assertEqual(len(game.chessmenOnBoard()), 32)
 
@@ -77,7 +77,7 @@ class TestChessgame(unittest.TestCase):
 		self.assertEqual(game.activeColor(), Chessman.black)
 		self.assertEqual(game.lastMove(), Move((1, 2), (1, 9),
 			Chessman.redCannon(), Chessman.blackKnight()))
-		self.assertEqual(game.chessmanAt((1, 2)), None)
+		self.assertEqual(game.chessmanAt((1, 2)), Chessman.invalid())
 		self.assertEqual(game.chessmanAt((1, 9)), Chessman.redCannon())
 		self.assertEqual(len(game.chessmenOnBoard()), 31)
 

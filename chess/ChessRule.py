@@ -1,27 +1,16 @@
 from chess.Chessman import Chessman
 from chess.ChessData import Move
+import numpy as np
 
 class ChessRule:
 
 	def __init__(self):
 		self.__activeColor = None
-		self.__board = (
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None],
-			[None, None, None, None, None, None, None, None, None]
-		)
+		self.__board = np.empty((9, 10), np.int32)
+		self.__board.fill(Chessman.invalid())
 
 	def __clearChessboard(self):
-		for y in range(len(self.__board)):
-			for x in range(len(self.__board[y])):
-				self.__board[y][x] = None
+		self.__board.fill(Chessman.invalid())
 
 	def __isPositionLegal(self, position):
 		return 0 <= position[0] <= 8 and 0 <= position[1] <= 9
@@ -34,27 +23,28 @@ class ChessRule:
 	def setChessmenOnBoard(self, chessmenOnBoard):
 		self.__clearChessboard()
 		for chessman in chessmenOnBoard:
-			self.__board[chessman.y][chessman.x] = chessman.identifier
+			self.__board[chessman.position] = chessman.identifier
+
+	def setBoard(self, board):
+		self.__board = board
 
 	def setActiveColor(self, activeColor):
 		self.__activeColor = activeColor
 
 	def isMoveRightColor(self, move):
-		if move.moveChessman != None and Chessman.color(move.moveChessman) == self.__activeColor:
+		if move.moveChessman != Chessman.invalid() and Chessman.color(move.moveChessman) == self.__activeColor:
 			return True
 		return False
 
 	def isMoveConformToChessboard(self, move):
-		fromX, fromY = move.fromPos
-		toX, toY = move.toPos
-		if self.__board[fromY][fromX] != move.moveChessman:
+		if self.__board[move.fromPos] != move.moveChessman:
 			return False
-		if self.__board[toY][toX] != move.ateChessman:
+		if self.__board[move.toPos] != move.ateChessman:
 			return False
 		return True
 
 	def isEatSelf(self, move):
-		if move.moveChessman == None or move.ateChessman == None:
+		if move.moveChessman == Chessman.invalid() or move.ateChessman == Chessman.invalid():
 			return False
 		return Chessman.color(move.moveChessman) == Chessman.color(move.ateChessman)
 
@@ -71,7 +61,7 @@ class ChessRule:
 		k2X, k2Y = king2Pos
 		if k1X == k2X:
 			for i in range(min(k1Y, k2Y)+1, max(k1Y, k2Y)):
-				if self.__board[i][k1X]:
+				if self.__board[k1X, i]:
 					return False
 			return True
 		return False
@@ -107,7 +97,7 @@ class ChessRule:
 		if not (abs(toX - fromX) == 2 and abs(toY - fromY) == 2):
 			return False
 		eyeX, eyeY = (fromX + toX)//2, (fromY + toY)//2
-		return self.__board[eyeY][eyeX] == None
+		return self.__board[eyeX, eyeY] == Chessman.invalid()
 
 	def isMoveOfRedElephantLegal(self, move):
 		return self.__isMoveOfElephantLegal(move, 0, 4)
@@ -119,9 +109,9 @@ class ChessRule:
 		fromX, fromY = move.fromPos
 		toX, toY = move.toPos
 		if abs(toX - fromX) == 2:
-				return abs(toY-fromY) == 1 and self.__board[fromY][(fromX+toX)//2] == None
+				return abs(toY-fromY) == 1 and self.__board[(fromX+toX)//2, fromY] == Chessman.invalid()
 		elif abs(toY-fromY) == 2:
-				return abs(toX-fromX) == 1 and self.__board[(fromY+toY)//2][fromX] == None
+				return abs(toX-fromX) == 1 and self.__board[fromX, (fromY+toY)//2] == Chessman.invalid()
 		return False
 
 	def isMoveOfRookLegal(self, move):
@@ -129,31 +119,31 @@ class ChessRule:
 		toX, toY = move.toPos	
 		if fromX == toX:
 			for i in range(min(fromY,toY)+1, max(fromY,toY)):
-				if self.__board[i][fromX]:
+				if self.__board[fromX, i]:
 					return False
 			return True
 		elif fromY == toY:
 			for i in range(min(fromX,toX)+1, max(fromX,toX)):
-				if self.__board[fromY][i]:
+				if self.__board[i, fromY]:
 					return False
 			return True
 		return False
 
 	def isMoveOfCannonLegal(self, move):
 		fromX, fromY = move.fromPos
-		toX, toY = move.toPos	
+		toX, toY = move.toPos
 		overCnt = 0
 		if fromX == toX:
 			for i in range(min(fromY,toY)+1, max(fromY,toY)):
-				if self.__board[i][fromX]:
+				if self.__board[fromX, i]:
 					overCnt += 1
 		elif fromY == toY:
 			for i in range(min(fromX,toX)+1, max(fromX,toX)):
-				if self.__board[fromY][i] != None:
+				if self.__board[i, fromY] != Chessman.invalid():
 					overCnt += 1
 		else:
 			return False
-		return overCnt == 0 and self.__board[toY][toX] == None or overCnt == 1 and self.__board[toY][toX]
+		return overCnt == 0 and self.__board[move.toPos] == Chessman.invalid() or overCnt == 1 and self.__board[move.toPos]
 
 	def isMoveOfRedPawnLegal(self, move):
 		fromX, fromY = move.fromPos
@@ -206,7 +196,7 @@ class ChessRule:
 		king = Chessman.identifier(Chessman.king, color)
 		for x in range(3, 6):
 			for y in kingRangeY:
-				if self.__board[y][x] == king:
+				if self.__board[x, y] == king:
 					kingPos = (x, y)
 					break
 			if kingPos:
@@ -217,7 +207,7 @@ class ChessRule:
 
 		for x in range(0, 9):
 			for y in range(0, 10):
-				chessman = self.__board[y][x]
+				chessman = self.__board[x, y]
 				if chessman and Chessman.color(chessman) != color:
 					move = Move((x, y), kingPos, chessman, king)
 					if self.__isMoveOfChessmanLegal(move):
@@ -226,13 +216,11 @@ class ChessRule:
 		return False
 
 	def isCheckedAfterMove(self, move):
-		fromX, fromY = move.fromPos
-		toX, toY = move.toPos
-		self.__board[fromY][fromX] = None
-		self.__board[toY][toX] = move.moveChessman
+		self.__board[move.fromPos] = Chessman.invalid()
+		self.__board[move.toPos] = move.moveChessman
 		ret = self.__isChecked(Chessman.color(move.moveChessman))
-		self.__board[fromY][fromX] = move.moveChessman
-		self.__board[toY][toX] = move.ateChessman
+		self.__board[move.fromPos] = move.moveChessman
+		self.__board[move.toPos] = move.ateChessman
 		return ret
 
 	def isMoveLegal(self, move):

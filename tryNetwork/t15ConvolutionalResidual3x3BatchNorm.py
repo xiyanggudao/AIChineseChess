@@ -10,7 +10,7 @@ def batchNormalization(x):
 	return tf.nn.batch_normalization(x, mean, variance, 0, 1, 1e-8)
 
 layer_cnt = 0
-def addLayer(x, in_channels, out_channels, kSize=5):
+def addLayer(x, in_channels, out_channels, kSize=3):
 	global layer_cnt
 	layer_cnt += 1
 	w1 = tf.Variable(tf.truncated_normal([kSize, kSize, in_channels, out_channels], 0., 0.1))
@@ -132,8 +132,8 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-train loss 19989.2
-train accuracy 0.7305
-test loss 19695.8
-test accuracy 0.7478
+train loss 22782.0
+train accuracy 0.5902
+test loss 22578.0
+test accuracy 0.6084
 '''
