@@ -132,6 +132,7 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
+iteration 400000
 train loss 22629.7
 train accuracy 0.5883
 test loss 22307.4

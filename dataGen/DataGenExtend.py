@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from chess.Chessgame import Chessgame
 from brain.MoveProbability import MoveProbability
 from chess.MoveGenerator import MoveGenerator
