@@ -71,7 +71,7 @@ def getSelectMove():
 		tx = ord(item[2]) - ord('a')
 		ty = ord(item[3]) - ord('0')
 
-		return Move((fx, fy), (tx, ty), None, None)
+		return Move((fx, fy), (tx, ty), Chessman.invalid(), Chessman.invalid())
 
 def onKey(event):
 	code = event.keycode
@@ -131,7 +131,7 @@ reset()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
-network = Network("./model/20171029-08400/model.ckpt")
+network = Network("./model/t16/model.ckpt")
 brain = MoveProbability(network)
 
 board.setMoveEventListener(onClick)

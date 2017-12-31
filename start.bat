@@ -1,1 +1,1 @@
-start pythonw app.py
+start pythonw analyse.py

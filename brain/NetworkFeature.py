@@ -244,3 +244,16 @@ def moveFeatureId2(fromPos, toPos):
 	id = moveToIdMap[fromPos[0],fromPos[1],toPos[0],toPos[1]]
 	assert id != -1
 	return id
+
+def outputProbability2(moves, outputFeature):
+	probability = []
+	for move in moves:
+		id = moveFeatureId2(move.fromPos, move.toPos)
+		probability.append(outputFeature[id])
+	totalProbability = sum(probability)
+	totalProbability2 = sum(outputFeature)
+
+	assert abs(totalProbability - totalProbability2) < 1e-6
+	assert abs(totalProbability - 1) < 1e-6
+
+	return probability

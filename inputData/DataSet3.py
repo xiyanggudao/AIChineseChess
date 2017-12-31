@@ -120,9 +120,6 @@ class DataSet:
 		game = Chessgame()
 		moveGen = MoveGenerator(game)
 		lastFen = ''
-		t1 = 0
-		t2 = 0
-		t3 = 0
 		while True:
 			line = file.readline().decode()
 			if not line:

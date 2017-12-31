@@ -120,28 +120,29 @@ class Chessman:
 
 	@staticmethod
 	def chessmanOfUcciFen(fen):
-		transMap = {
-			'K': Chessman.redKing(),
-			'A': Chessman.redMandarin(),
-			'B': Chessman.redElephant(),
-			'N': Chessman.redKnight(),
-			'R': Chessman.redRook(),
-			'C': Chessman.redCannon(),
-			'P': Chessman.redPawn(),
-			'k': Chessman.blackKing(),
-			'a': Chessman.blackMandarin(),
-			'b': Chessman.blackElephant(),
-			'n': Chessman.blackKnight(),
-			'r': Chessman.blackRook(),
-			'c': Chessman.blackCannon(),
-			'p': Chessman.blackPawn()
-		}
-		return transMap[fen]
+		return fenToChessmanTransMap[fen]
 
 	@staticmethod
 	def colorOfUcciFen(fen):
-		transMap = {
-			'w': Chessman.red,
-			'b': Chessman.black
-		}
-		return transMap[fen]
+		return fenToColorTransMap[fen]
+
+fenToChessmanTransMap = {
+	'K': Chessman.redKing(),
+	'A': Chessman.redMandarin(),
+	'B': Chessman.redElephant(),
+	'N': Chessman.redKnight(),
+	'R': Chessman.redRook(),
+	'C': Chessman.redCannon(),
+	'P': Chessman.redPawn(),
+	'k': Chessman.blackKing(),
+	'a': Chessman.blackMandarin(),
+	'b': Chessman.blackElephant(),
+	'n': Chessman.blackKnight(),
+	'r': Chessman.blackRook(),
+	'c': Chessman.blackCannon(),
+	'p': Chessman.blackPawn()
+}
+fenToColorTransMap = {
+	'w': Chessman.red,
+	'b': Chessman.black
+}

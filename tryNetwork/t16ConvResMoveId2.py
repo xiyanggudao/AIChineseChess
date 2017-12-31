@@ -89,7 +89,7 @@ dataEnd = time.time()
 print('data time', round(dataEnd - dataStart, 2), 'size', len(inputData.dataIds))
 dataTime = 0
 trainTime = 0
-for i in range(400000):
+for i in range(600000):
 	dataStart = time.time()
 	boards, moves, predictions = inputData.nextBatch(128)
 	dataTime += time.time() - dataStart
@@ -113,6 +113,8 @@ for i in range(400000):
 	session.run(train, feed_dict = feed)
 	trainTime += time.time() - trainStart
 
+saver = tf.train.Saver()
+saver.save(session, 't16/model.ckpt')
 
 print('train finished dataTime', int(dataTime), 'trainTime', int(trainTime))
 boards, moves, predictions = inputData.nextBatch(10000)  # len(testData.dataIds))

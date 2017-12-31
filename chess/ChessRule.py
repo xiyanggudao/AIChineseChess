@@ -116,7 +116,7 @@ class ChessRule:
 
 	def isMoveOfRookLegal(self, move):
 		fromX, fromY = move.fromPos
-		toX, toY = move.toPos	
+		toX, toY = move.toPos
 		if fromX == toX:
 			for i in range(min(fromY,toY)+1, max(fromY,toY)):
 				if self.__board[fromX, i]:
@@ -164,24 +164,8 @@ class ChessRule:
 		return False
 
 	def __isMoveOfChessmanLegal(self, move):
-		funcMap = {
-			Chessman.redKing() :ChessRule.isMoveOfRedKingLegal,
-			Chessman.redMandarin(): ChessRule.isMoveOfRedMandarinLegal,
-			Chessman.redElephant(): ChessRule.isMoveOfRedElephantLegal,
-			Chessman.redKnight(): ChessRule.isMoveOfKnightLegal,
-			Chessman.redRook(): ChessRule.isMoveOfRookLegal,
-			Chessman.redCannon(): ChessRule.isMoveOfCannonLegal,
-			Chessman.redPawn(): ChessRule.isMoveOfRedPawnLegal,
-			Chessman.blackKing() :ChessRule.isMoveOfBlackKingLegal,
-			Chessman.blackMandarin(): ChessRule.isMoveOfBlackMandarinLegal,
-			Chessman.blackElephant(): ChessRule.isMoveOfBlackElephantLegal,
-			Chessman.blackKnight(): ChessRule.isMoveOfKnightLegal,
-			Chessman.blackRook(): ChessRule.isMoveOfRookLegal,
-			Chessman.blackCannon(): ChessRule.isMoveOfCannonLegal,
-			Chessman.blackPawn(): ChessRule.isMoveOfBlackPawnLegal
-		}
-		if move.moveChessman in funcMap:
-			return funcMap[move.moveChessman](self, move)
+		if move.moveChessman in chessmanToFuncMap:
+			return chessmanToFuncMap[move.moveChessman](self, move)
 		return False
 
 	def __isChecked(self, color):
@@ -237,3 +221,20 @@ class ChessRule:
 		if self.isCheckedAfterMove(move):
 			return False
 		return True
+
+chessmanToFuncMap = {
+	Chessman.redKing() :ChessRule.isMoveOfRedKingLegal,
+	Chessman.redMandarin(): ChessRule.isMoveOfRedMandarinLegal,
+	Chessman.redElephant(): ChessRule.isMoveOfRedElephantLegal,
+	Chessman.redKnight(): ChessRule.isMoveOfKnightLegal,
+	Chessman.redRook(): ChessRule.isMoveOfRookLegal,
+	Chessman.redCannon(): ChessRule.isMoveOfCannonLegal,
+	Chessman.redPawn(): ChessRule.isMoveOfRedPawnLegal,
+	Chessman.blackKing() :ChessRule.isMoveOfBlackKingLegal,
+	Chessman.blackMandarin(): ChessRule.isMoveOfBlackMandarinLegal,
+	Chessman.blackElephant(): ChessRule.isMoveOfBlackElephantLegal,
+	Chessman.blackKnight(): ChessRule.isMoveOfKnightLegal,
+	Chessman.blackRook(): ChessRule.isMoveOfRookLegal,
+	Chessman.blackCannon(): ChessRule.isMoveOfCannonLegal,
+	Chessman.blackPawn(): ChessRule.isMoveOfBlackPawnLegal
+}
