@@ -47,6 +47,7 @@ class Chessgame:
 			self.__board[move.fromPos] = move.moveChessman
 			self.__board[move.toPos] = move.ateChessman
 			self.__movesBackup.append(move)
+			return move
 
 	def redoMove(self):
 		if len(self.__movesBackup) > 0:
@@ -55,6 +56,7 @@ class Chessgame:
 			self.__board[move.fromPos] = Chessman.invalid()
 			self.__board[move.toPos] = move.moveChessman
 			self.__moves.append(move)
+			return move
 
 	def chessmenOnBoard(self):
 		ret = list()

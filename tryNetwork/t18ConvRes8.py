@@ -1,5 +1,6 @@
 import tensorflow as tf
 import time
+import os
 import sys
 sys.path.append("..")
 from inputData.DataSet3 import DataSet
@@ -61,6 +62,11 @@ l1 = addLayer(boardInput, 14, 128)
 l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 128)
+l1 = addLayer(l1, 128, 128)
+l1 = addLayer(l1, 128, 128)
+l1 = addLayer(l1, 128, 128)
+l1 = addLayer(l1, 128, 128)
+l1 = addLayer(l1, 128, 128)
 l1 = addLayer(l1, 128, 24, 1)
 flat = tf.reshape(l1, [-1, 9*10*24])
 output = pickySoftmax(flat, 9*10*24, 2062, moveInput)
@@ -72,7 +78,11 @@ correct_prediction = tf.equal(tf.argmax(prediction * output,1), tf.argmax(output
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
 session = tf.Session()
-session.run(tf.global_variables_initializer())
+saver = tf.train.Saver()
+if os.path.exists('t18'):
+	saver.restore(session, 't18/model.ckpt')
+else:
+	session.run(tf.global_variables_initializer())
 
 tf.summary.scalar('loss', loss)
 tf.summary.scalar('accuracy', accuracy)
@@ -114,7 +124,7 @@ for i in range(600000):
 	trainTime += time.time() - trainStart
 
 saver = tf.train.Saver()
-saver.save(session, 't16/model.ckpt')
+saver.save(session, 't18/model.ckpt')
 
 print('train finished dataTime', int(dataTime), 'trainTime', int(trainTime))
 boards, moves, predictions = inputData.nextBatch(10000)  # len(testData.dataIds))
@@ -134,16 +144,16 @@ res = session.run([loss, accuracy], feed_dict = {
 print('test loss', res[0])
 print('test accuracy', res[1])
 '''
-iteration 400000
-train loss 22629.7
-train accuracy 0.5883
-test loss 22307.4
-test accuracy 0.6099
-'''
-'''
 iteration 600000
-train loss 21022.6
-train accuracy 0.6621
-test loss 20847.6
-test accuracy 0.6773
+train loss 19916.1
+train accuracy 0.7089
+test loss 19088.6
+test accuracy 0.7577
+'''
+'''
+iteration 1200000
+train loss 17062.5
+train accuracy 0.8271
+test loss 16092.2
+test accuracy 0.8683
 '''

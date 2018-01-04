@@ -73,6 +73,13 @@ def getSelectMove():
 
 		return Move((fx, fy), (tx, ty), Chessman.invalid(), Chessman.invalid())
 
+def selectMove(move):
+	if move:
+		board.clearSelection()
+		board.addToSelection(move.fromPos)
+		board.addToSelection(move.toPos)
+		board.refresh()
+
 def onKey(event):
 	code = event.keycode
 	if code == 27: # Esc
@@ -82,28 +89,31 @@ def onKey(event):
 		else:
 			rootWindow.destroy()
 	elif code == 37: # Left
-		game.undoMove()
+		move = game.undoMove()
 		board.setChessmenOnBoard(game.chessmenOnBoard())
-		board.refresh()
+		selectMove(move)
 		think()
 	elif code == 39: # Right
-		game.redoMove()
+		move = game.redoMove()
 		board.setChessmenOnBoard(game.chessmenOnBoard())
-		board.refresh()
+		selectMove(move)
 		think()
 	elif code == 38: # Up
 		selectIndexs = moveList.curselection()
 		if len(selectIndexs) > 0 and selectIndexs[0] > 0:
 			moveList.select_clear(selectIndexs[0])
 			moveList.select_set(selectIndexs[0]-1)
+			onMoveItemClick(None)
 	elif code == 40: # Down
 		selectIndexs = moveList.curselection()
 		if len(selectIndexs) > 0 and selectIndexs[0] < moveList.size():
 			moveList.select_clear(selectIndexs[0])
 			moveList.select_set(selectIndexs[0]+1)
+			onMoveItemClick(None)
 	elif code == 13: # Enter
 		move = getSelectMove()
 		if move:
+			selectMove(move)
 			game.makeMove(move.fromPos, move.toPos)
 			board.setChessmenOnBoard(game.chessmenOnBoard())
 			board.refresh()
@@ -117,11 +127,7 @@ def onKey(event):
 
 def onMoveItemClick(event):
 	move = getSelectMove()
-	if move:
-		board.clearSelection()
-		board.addToSelection(move.fromPos)
-		board.addToSelection(move.toPos)
-		board.refresh()
+	selectMove(move)
 
 rootWindow = tkinter.Tk()
 
@@ -131,7 +137,7 @@ reset()
 board = Chessboard(cv)
 board.setChessmenOnBoard(game.chessmenOnBoard())
 rule = ChessRule()
-network = Network("./model/t16/model.ckpt")
+network = Network("./model/t18/model.ckpt")
 brain = MoveProbability(network)
 
 board.setMoveEventListener(onClick)
